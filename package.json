@@ -1,0 +1,11 @@
+{
+  "name": "caverna-barbearia",
+  "version": "1.0.0",
+  "description": "projeto feito para a barbearia caverna atender seus clientes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "GabrielAndrad",
+  "license": "ISC"
+}
