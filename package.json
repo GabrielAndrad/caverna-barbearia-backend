@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "projeto feito para a barbearia caverna atender seus clientes",
   "main": "index.js",
+  "engines": {
+    "node":"14.15.5"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
