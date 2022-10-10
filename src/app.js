@@ -1,4 +1,4 @@
-const process = require("dotenv").config();
+require("dotenv").config();
 
 const express = require('express')
 const cors = require('cors')
@@ -7,7 +7,6 @@ const path = require('path')
 const morgan = require('morgan')
 const app = express();
 const mongoose = require("mongoose");
-
 
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended:false}))
@@ -23,6 +22,8 @@ app.get('',(req,res) => {
 
 app.use(require("./routes"))
 
-app.listen(process.parsed.PORT || 4002)
+app.listen(process.env.PORT || 4002, () => {
+  console.log("Express server listening on port %d in %s mode", process.env.port, app.settings.env);
+})
 
 

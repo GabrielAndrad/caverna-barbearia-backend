@@ -11,7 +11,7 @@ const router = expresse.Router()
 router.get(`/users`,async (req,res) => {
     try{
       const users = await user.find()
-      return res.send(process.parsed.APP_URL)
+      return res.send({users})
     }catch (err) {
       return res.send('Falha ao carregar usuários')
     }
