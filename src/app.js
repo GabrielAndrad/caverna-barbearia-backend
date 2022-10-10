@@ -1,4 +1,4 @@
-require("dotenv").config();
+const process = require("dotenv").config();
 
 const express = require('express')
 const cors = require('cors')
@@ -8,14 +8,6 @@ const morgan = require('morgan')
 const app = express();
 const mongoose = require("mongoose");
 
-
-
-mongoose.connect(
-  process.env.MONGO_URL,
-  {
-    useNewUrlParser: true
-  }
-);
 
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended:false}))
@@ -31,6 +23,6 @@ app.get('',(req,res) => {
 
 app.use(require("./routes"))
 
-app.listen(process.env.PORT || 4002)
+app.listen(process.parsed.PORT || 4002)
 
 
