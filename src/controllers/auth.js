@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser')
 const expresse = require('express')
+const process = require("dotenv").config();
 
 
 const user = require('../models/user')
@@ -7,10 +8,10 @@ const user = require('../models/user')
 const router = expresse.Router()
 
 
-router.get('/users',async (req,res) => {
+router.get(`/users`,async (req,res) => {
     try{
       const users = await user.find()
-      return res.send({users})
+      return res.send(process.parsed.APP_URL)
     }catch (err) {
       return res.send('Falha ao carregar usuários')
     }

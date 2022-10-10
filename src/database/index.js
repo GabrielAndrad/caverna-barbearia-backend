@@ -1,9 +1,14 @@
-const { default: mongoose } = require('mongoose')
-const moongoose = require('mongoose')
+const process = require("dotenv").config();
+const mongoose = require('mongoose')
 
-moongoose.connect('mongodb://localhost/noderest')
+mongoose.connect(
+  process.parsed.MONGO_URL,
+  {
+    useNewUrlParser: true
+  }
+);
 
-// mongodb+srv://projeto-barbearia:<password>@cluster0.du6dlj3.mongodb.net/?retryWrites=true&w=majority
+
 
 mongoose.Promise = global.Promise
 
