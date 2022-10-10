@@ -1,11 +1,10 @@
 const bodyParser = require('body-parser')
-const expresse = require('express')
-const process = require("dotenv").config();
+const express = require('express')
 
 
 const user = require('../models/user')
 
-const router = expresse.Router()
+const router = express.Router()
 
 
 router.get(`/users`,async (req,res) => {
