@@ -11,12 +11,12 @@ app.use(cors())
 require('./controllers/auth')(app); 
 
 app.get('',(req,res) => {
-  res.send('OK')
+  res.send('OK aaa')
 })
 
 app.use(require("./routes"))
 
-app.listen(process.env.PORT || 4002, () => {
+app.listen(4002, () => {
   console.log("Express server listening on port in mode", process.env.PORT, app.settings.env);
 })
 

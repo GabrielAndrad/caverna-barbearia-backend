@@ -10,7 +10,7 @@ const router = express.Router()
 router.get(`/users`,async (req,res) => {
     try{
       const users = await user.find()
-      return res.send({users})
+      return res.send('USERS')
     }catch (err) {
       return res.send('Falha ao carregar usuários')
     }
