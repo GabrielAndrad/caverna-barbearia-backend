@@ -4,7 +4,7 @@
   "description": "projeto feito para a barbearia caverna atender seus clientes",
   "main": "index.js",
   "engines": {
-    "node":"14.15.5"
+    "node": "14.15.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,10 +19,12 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "heroku": "^7.64.0",
+    "moment": "^2.29.4",
     "mongodb": "^4.10.0",
     "mongoose": "^6.6.5",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "twilio": "^3.83.0"
   }
 }

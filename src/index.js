@@ -9,6 +9,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(cors())
 
 require('./controllers/auth')(app); 
+require('./controllers/schedule')(app); 
 
 app.get('',(req,res) => {
   res.send('OK novo')
