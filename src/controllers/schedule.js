@@ -74,8 +74,7 @@ router.get('/schedule',async(req,res) => {
 
     return res.send(schedules)
   }catch(err){
-    console.log(err)
-    return res.status(400).send('Falha ao carregar agendamentos')
+    next(err);
   }
 })
 
