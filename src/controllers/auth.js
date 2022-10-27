@@ -18,6 +18,7 @@ router.get(`/users`,async (req,res) => {
 router.post('/register', async (req,res) => {
   try{
     const userModel = await user.create(req.body);
+    
 
     return res.send({ userModel });
   } catch(err){

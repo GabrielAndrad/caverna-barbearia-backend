@@ -58,7 +58,7 @@ router.get('/schedule-hours/:date',async(req,res) => {
       return {
         disabled: filterDate.filter(date => date.hour === hour.value).length > 0,
         value: hour.value
-      }
+      } 
 
      })
      return res.send(setHours)
@@ -78,6 +78,30 @@ router.get('/schedule', async(req,res) => {
   }
 })
 
+//return all schedules
+router.get('/schedule-by-user/:user', async(req,res) => {
+  try{
+    const schedules = await schedule.find()
+    const userReq = req.params.user
+    if(userReq === '12345678912'){
+      return res.send(schedules)
+    } else {
+      const scheduleByUser = schedules.filter(el => {
+        return el.user.phone === userReq
+      })
+      if(scheduleByUser.length > 0){
+        return res.send(scheduleByUser)
+      } else {
+        return res.status(404).send('Não existem agendamento cadastrados para este usuário')
+      }
+    }
+    
+  } catch(err){
+    console.log(err)
+    res.status(400).send(err)
+  }
+})
+
 router.post('/schedule', async (req,res) => {
   try{
     const scheduleList = await schedule.find()
@@ -88,18 +112,26 @@ router.post('/schedule', async (req,res) => {
     if(filterSchedule.length > 0){
       return res.status(400).send('Já existe um horário agendado para esta data e hora')
     } else {
-      const scheduleModel = await schedule.create(req.body);
-      const userModel = await user.find()
-  
-      const filterUser = userModel.filter((el) => {
-        return el.phone === req.body.user.phone
+      const userFilter = scheduleList.filter(el => {
+        return req.body.user.phone === el.user.phone
       })
-      if(filterUser.length === 0){
-          user.create({
-            phone:req.body.user.phone,
-            name:req.body.user.name
-          })
+      if(userFilter.length > 0){
+        return res.status(400).send('Já existe um horário cadastrado para este telefone')
+      } else {
+        const scheduleModel = await schedule.create(req.body);
+        const userModel = await user.find()
+    
+        const filterUser = userModel.filter((el) => {
+          return el.phone === req.body.user.phone
+        })
+        if(filterUser.length === 0){
+            user.create({
+              phone:req.body.user.phone,
+              name:req.body.user.name
+            })
+        }
       }
+      
       return res.send({ scheduleModel });
 
     }

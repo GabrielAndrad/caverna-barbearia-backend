@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "projeto feito para a barbearia caverna atender seus clientes",
   "main": "index.js",
+  "npm": "6.4.11", 
   "engines": {
     "node": "14.15.5"
   },
