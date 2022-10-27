@@ -68,12 +68,14 @@ router.get('/schedule-hours/:date',async(req,res) => {
 })
 //return all schedules
 router.get('/schedule', async(req,res) => {
+  console.log(schedule)
   try{
     const schedules = await schedule.find()
   
-
+    console.log(schedules)
     return res.send(schedules)
   } catch(err){
+    console.log(err)
     res.status(400).send(err)
   }
 })
