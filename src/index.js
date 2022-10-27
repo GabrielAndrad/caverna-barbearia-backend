@@ -12,7 +12,8 @@ require('./controllers/auth')(app);
 require('./controllers/schedule')(app); 
 
 app.get('',(req,res) => {
-  res.send('OK novo')
+
+  res.send(process.env.MONGO_URL)
 })
 
 app.use(require("./routes"))
