@@ -130,9 +130,9 @@ router.post('/schedule', async (req,res) => {
               name:req.body.user.name
             })
         }
+        return res.send({ scheduleModel });
       }
       
-      return res.send({ scheduleModel });
 
     }
    
