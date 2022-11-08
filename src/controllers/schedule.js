@@ -79,15 +79,22 @@ router.get('/schedule', async(req,res) => {
 })
 
 //return all schedules
-router.get('/schedule-by-user/:user', async(req,res) => {
+router.get('/schedules-by-user/:user', async(req,res) => {
   try{
     const schedules = await schedule.find()
     const userReq = req.params.user
-    if(userReq === '12345678912'){
-      return res.send(schedules)
+    if(userReq === '(12)34567-8912'){
+      
+      return res.send(schedules.map((el) => {
+        el.date = moment(el.date).format('DD/MM/YYYY')
+        return el
+      }))
     } else {
       const scheduleByUser = schedules.filter(el => {
         return el.user.phone === userReq
+      }).map((el) => {
+        el.date = moment(el.date).format('DD/MM/YYYY')
+        return el
       })
       if(scheduleByUser.length > 0){
         return res.send(scheduleByUser)
