@@ -54,7 +54,6 @@ router.get('/schedule-hours/:date',async(req,res) => {
     })
 
      const setHours = hours.map((hour) => {
-       console.log(filterDate[0].hour,hour.value)
       return {
         disabled: filterDate.filter(date => date.hour === hour.value).length > 0,
         value: hour.value
@@ -83,12 +82,52 @@ router.get('/schedules-by-user/:user', async(req,res) => {
   try{
     const schedules = await schedule.find()
     const userReq = req.params.user
-    if(userReq === '(12)34567-8912'){
-      
-      return res.send(schedules.map((el) => {
-        el.date = moment(el.date).format('DD/MM/YYYY')
-        return el
-      }))
+    const filters = req.query
+    if(userReq === '(12)34567-8910'){
+      if(filters){
+        return res.send(schedules.map((el) => {
+          el.date = moment(el.date).format('DD/MM/YYYY')
+          return el
+        }).filter((filt) => {
+          if(filters.search){
+            return (filt.user.name.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(filters.search.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "")) 
+            || filt.user.phone.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(filters.search.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "")) 
+            || filt.typeCut.title.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(filters.search.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            || filt.typeCut.price.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(filters.search.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "")))
+          } else {
+            return true
+          }
+        
+        }).filter(filt2 => {
+          if(filters.inicio){
+            const dateFormat = filt2.date.split('/')
+            const date = new Date(dateFormat[2] + '-'+ dateFormat[1] + '-' + dateFormat[0]).getTime()
+            
+            return  (
+              date >= new Date(filters.inicio).getTime() 
+              && date <= new Date(filters.fim).getTime() 
+              )
+          } else {
+            return true
+          }
+         
+          })
+        )
+      } else {
+        return res.send(schedules.map((el) => {
+          el.date = moment(el.date).format('DD/MM/YYYY')
+          return el
+        }))
+      }
+      return 
     } else {
       const scheduleByUser = schedules.filter(el => {
         return el.user.phone === userReq
@@ -152,7 +191,6 @@ router.post('/schedule', async (req,res) => {
 
 router.put('/schedule/:id',async (req,res) => {
   try{
-    console.log(req.params)
     const userModel = await schedule.findByIdAndUpdate(req.params.id,req.body,{
       returnOriginal: false
     });
