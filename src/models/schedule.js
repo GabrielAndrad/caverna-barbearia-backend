@@ -20,7 +20,7 @@ const scheduleSchema = new mongoose.Schema({
     required:true
   },
   typeCut: {
-    type:{title:'String',price:'String'},
+    type:{title:'String',price:'String',time:'Number',id:'Number'},
     required:true
   },
 

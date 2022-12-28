@@ -10,6 +10,7 @@ app.use(cors())
 
 require('./controllers/auth')(app); 
 require('./controllers/schedule')(app); 
+require('./controllers/holiday')(app);
 
 app.get('',(req,res) => {
 
