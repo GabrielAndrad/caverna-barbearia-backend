@@ -67,6 +67,7 @@ const hours = [{
 router.get('/schedule-hours/:date', async (req, res) => {
   try {
     const schedules = await schedule.find()
+    console.log(req,schedules)
     var strData = moment(req.params.date).format('DD/MM/YYYY')
     var partesData = strData.split("/");
     var data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
@@ -101,11 +102,12 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
+      console.log()
       return {
         disabled: 
         filterDisabled.length > 0 || 
         (date === 2 && time.length > 0) || 
-        (new Date() >= data && sum && hourSum) ||
+        (new Date() > data && sum && hourSum) ||
          ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim)
         ,
         value: hour.value
