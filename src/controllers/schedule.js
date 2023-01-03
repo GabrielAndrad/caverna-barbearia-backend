@@ -294,22 +294,10 @@ router.post('/schedule', async (req, res) => {
       } else {
         const scheduleModel = await schedule.create(req.body);  
         console.log(scheduleModel)
-        const userModel = await user.find()
-        console.log(userModel)
-
-        // const filterUser = userModel.filter((el) => {
-        //   return el.phone === req.body.user.phone
-        // })
-        // if (filterUser.length === 0) {
-        //   user.create({
-        //     phone: req.body.user.phone,
-        //     name: req.body.user.name
-        //   })
-        // }
 
         sendMessage(`SEU CÓDIGO DE AGENDAMENTO É ${scheduleModel._id}`, '')
 
-        return res.send({ scheduleModel });
+        return res.send(scheduleModel);
       }
 
 
@@ -318,7 +306,7 @@ router.post('/schedule', async (req, res) => {
 
   } catch (err) {
     console.log('err', err)
-    return res.status(400).send(err.message)
+    return res.status(400).send(err.message+req.body)
   }
 })
 

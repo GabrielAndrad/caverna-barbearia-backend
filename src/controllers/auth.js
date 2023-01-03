@@ -15,6 +15,21 @@ router.get(`/users`,async (req,res) => {
       return res.send('Falha ao carregar usuários')
     }
 })
+
+router.delete('/user/',async (req,res) => {
+  try{
+    const users = await user.find()
+    
+    users.map( async (el) => {
+      console.log(el._id)
+      await user.findByIdAndDelete(el._id)
+    })
+
+    return res.send(users)
+  }catch(err){
+    return res.send(err.message)
+  }
+})
 router.post('/register', async (req,res) => {
   try{
     const userModel = await user.create(req.body);
