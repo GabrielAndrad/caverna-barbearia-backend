@@ -297,7 +297,7 @@ router.post('/schedule', async (req, res) => {
 
         sendMessage(`SEU CÓDIGO DE AGENDAMENTO É ${scheduleModel._id}`, '')
 
-        return res.send(scheduleModel);
+        return res.send({scheduleModel});
       }
 
 
