@@ -67,7 +67,6 @@ const hours = [{
 router.get('/schedule-hours/:date', async (req, res) => {
   try {
     const schedules = await schedule.find()
-    console.log(req,schedules)
     var strData = moment(req.params.date).format('DD/MM/YYYY')
     var partesData = strData.split("/");
     var data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
@@ -102,7 +101,6 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
-      console.log()
       return {
         disabled: 
         filterDisabled.length > 0 || 
@@ -295,7 +293,9 @@ router.post('/schedule', async (req, res) => {
         return res.status(400).send('Já existe um horário cadastrado para este telefone')
       } else {
         const scheduleModel = await schedule.create(req.body);  
+        console.log(scheduleModel)
         const userModel = await user.find()
+        console.log(userModel)
 
         // const filterUser = userModel.filter((el) => {
         //   return el.phone === req.body.user.phone
