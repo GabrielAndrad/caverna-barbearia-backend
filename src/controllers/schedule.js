@@ -297,15 +297,15 @@ router.post('/schedule', async (req, res) => {
         const scheduleModel = await schedule.create(req.body);  
         const userModel = await user.find()
 
-        const filterUser = userModel.filter((el) => {
-          return el.phone === req.body.user.phone
-        })
-        if (filterUser.length === 0) {
-          user.create({
-            phone: req.body.user.phone,
-            name: req.body.user.name
-          })
-        }
+        // const filterUser = userModel.filter((el) => {
+        //   return el.phone === req.body.user.phone
+        // })
+        // if (filterUser.length === 0) {
+        //   user.create({
+        //     phone: req.body.user.phone,
+        //     name: req.body.user.name
+        //   })
+        // }
 
         sendMessage(`SEU CÓDIGO DE AGENDAMENTO É ${scheduleModel._id}`, '')
 
