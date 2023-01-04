@@ -62,6 +62,33 @@ const hours = [{
 },{
   disabled: false,
   value: '17:30:00'
+},{
+  disabled: false,
+  value: '18:00:00'
+},{
+  disabled: false,
+  value: '18:30:00'
+},{
+  disabled: false,
+  value: '19:00:00'
+},{
+  disabled: false,
+  value: '19:30:00'
+},{
+  disabled: false,
+  value: '20:00:00'
+},{
+  disabled: true,
+  value: '20:30:00'
+},{
+  disabled: true,
+  value: '21:00:00'
+},{
+  disabled: true,
+  value: '21:30:00'
+},{
+  disabled: true,
+  value: '22:00:00'
 }]
 
 router.get('/schedule-hours/:date', async (req, res) => {
@@ -106,7 +133,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
         filterDisabled.length > 0 || 
         (date === 2 && time.length > 0) || 
         (new Date() > data && sum && hourSum) ||
-         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim)
+         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
+         hourFmt > 20
         ,
         value: hour.value
       }
@@ -406,7 +434,9 @@ router.get('/infos',async (req,res) => {
     const schedulesType2 = schedules.filter((el) => el.typeCut.id === 2 || el.typeCut.title === 'Tradicional (30 min)')
     const schedulesType3 = schedules.filter((el) => el.typeCut.id === 3 || el.typeCut.title === 'Barba (30 min)')
     const schedulesType4 = schedules.filter((el) => el.typeCut.id === 4 || el.typeCut.title === 'Pezinho (30 min)')
-    
+    const schedulesType5 = schedules.filter((el) => el.typeCut.id === 5 || el.typeCut.title === 'Degradê + Barba (1 hora)')
+    const schedulesType6 = schedules.filter((el) => el.typeCut.id === 6 || el.typeCut.title === 'Tradicional + Barba (1 hora)')
+
     const bodyInfo = {
      typeService:{
       total: schedules.length,
@@ -414,16 +444,21 @@ router.get('/infos',async (req,res) => {
         Degradê: schedulesType1.length,
         Tradicional: schedulesType2.length,
         Barba: schedulesType3.length, 
-        Pézinho: schedulesType4.length
+        Pézinho: schedulesType4.length,
+        'Degradê + Barba':schedulesType5.length,
+        'Tradicional + Barba':schedulesType6.length
+
       }
      },
      priceService: {
-      total:(schedulesType1.length*30) + (schedulesType2.length*25) + (schedulesType3.length*20) + (schedulesType4.length*10),
+      total:(schedulesType1.length*30) + (schedulesType2.length*25) + (schedulesType3.length*20) + (schedulesType4.length*10) + (schedulesType5.length*50) + (schedulesType6.length*45),
       types:{
         Degradê: schedulesType1.length*30,
         Tradicional: schedulesType2.length*25,
         Barba: schedulesType3.length*20,
-        Pézinho: schedulesType4.length*10
+        Pézinho: schedulesType4.length*10,
+        'Degradê + Barba':schedulesType5.length*50,
+        'Tradicional + Barba':schedulesType6.length*45
       }
      }
     }
