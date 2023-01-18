@@ -31,15 +31,6 @@ const hours = [{
   value: '12:00:00'
 },{
   disabled: false,
-  value: '12:30:00'
-}, {
-  disabled: false,
-  value: '13:00:00'
-},{
-  disabled: false,
-  value: '13:30:00'
-},{
-  disabled: false,
   value: '14:00:00'
 },{
   disabled: false,
@@ -451,14 +442,14 @@ router.get('/infos',async (req,res) => {
       }
      },
      priceService: {
-      total:(schedulesType1.length*30) + (schedulesType2.length*25) + (schedulesType3.length*20) + (schedulesType4.length*10) + (schedulesType5.length*50) + (schedulesType6.length*45),
+      total:(schedulesType1.length*30) + (schedulesType2.length*25) + (schedulesType3.length*25) + (schedulesType4.length*15) + (schedulesType5.length*50) + (schedulesType6.length*50),
       types:{
         Degradê: schedulesType1.length*30,
         Tradicional: schedulesType2.length*25,
-        Barba: schedulesType3.length*20,
-        Pézinho: schedulesType4.length*10,
+        Barba: schedulesType3.length*25,
+        Pézinho: schedulesType4.length*15,
         'Degradê + Barba':schedulesType5.length*50,
-        'Tradicional + Barba':schedulesType6.length*45
+        'Tradicional + Barba':schedulesType6.length*50
       }
      }
     }
