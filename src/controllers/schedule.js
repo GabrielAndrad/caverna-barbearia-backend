@@ -128,7 +128,7 @@ const hours = [{
   disabled: false,
   value: '20:00:00'
 },{
-  disabled: true,
+  disabled: false,
   value: '20:30:00'
 },{
   disabled: true,
@@ -178,14 +178,13 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
-      console.log(hourFmt,filterDisabled.length > 0, (date === 2 && time.length > 0 && hourFmt !== 14), (new Date() > data && sum && hourSum),((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim))
       return {
         disabled: 
         filterDisabled.length > 0 || 
         (date === 2 && time.length > 0 && hourFmt !== 14) || 
         (new Date() > data && sum && hourSum) ||
          ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
-         hourFmt > 20
+         hourFmt > 20.3 || hourFmt === 9
         ,
         value: hour.value
       }
