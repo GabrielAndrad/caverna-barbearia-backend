@@ -152,7 +152,6 @@ router.get('/schedule-hours/:date', async (req, res) => {
       return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     })
     const holidays = await holiday.find()
-    console.log(data.getDay())
     const hoursSelected = data.getDay() === 6?hourSabado:hours
     const setHours = hoursSelected.map((hour,index) => {
       
@@ -179,11 +178,11 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
-      // console.log(holidayDisabled,hourFmt,((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim))
+      console.log(hourFmt,filterDisabled.length > 0, (date === 2 && time.length > 0 && hourFmt !== 14), (new Date() > data && sum && hourSum),((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim))
       return {
         disabled: 
         filterDisabled.length > 0 || 
-        (date === 2 && time.length > 0) || 
+        (date === 2 && time.length > 0 && hourFmt !== 14) || 
         (new Date() > data && sum && hourSum) ||
          ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
          hourFmt > 20
@@ -192,6 +191,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
 
     })
+    console.log(setHours)
     return res.send(setHours)
   } catch (err) {
     console.log(err)
