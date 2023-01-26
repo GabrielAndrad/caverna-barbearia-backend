@@ -8,6 +8,65 @@ const holiday = require('../models/holiday')
 
 const router = express.Router()
 
+const hourSabado = [{
+  disabled: false,
+  value: '08:00:00'
+},{
+  disabled: false,
+  value: '08:30:00'
+},
+  {
+    disabled: false,
+    value: '09:00:00'
+  },{
+    disabled: false,
+    value: '09:30:00'
+  },{
+    disabled: false,
+    value: '10:00:00'
+  },{
+    disabled: false,
+    value: '10:30:00'
+  },{
+    disabled: false,
+    value: '11:00:00'
+  },{
+    disabled: false,
+    value: '11:30:00'
+  }, {
+    disabled: false,
+    value: '12:00:00'
+  },{
+    disabled: false,
+    value: '14:00:00'
+  },{
+    disabled: false,
+    value: '14:30:00'
+  }, {
+    disabled: false,
+    value: '15:00:00'
+  },{
+    disabled: false,
+    value: '15:30:00'
+  }, {
+    disabled: false,
+    value: '16:00:00'
+  },{
+    disabled: false,
+    value: '16:30:00'
+  }, {
+    disabled: false,
+    value: '17:00:00'
+  },{
+    disabled: false,
+    value: '17:30:00'
+  },{
+    disabled: false,
+    value: '18:00:00'
+  },{
+    disabled: false,
+    value: '18:30:00'
+}]
 const hours = [{
   disabled: false,
   value: '09:00:00'
@@ -93,15 +152,16 @@ router.get('/schedule-hours/:date', async (req, res) => {
       return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     })
     const holidays = await holiday.find()
-
-    const setHours = hours.map((hour,index) => {
+    console.log(data.getDay())
+    const hoursSelected = data.getDay() === 6?hourSabado:hours
+    const setHours = hoursSelected.map((hour,index) => {
       
       const sum = new Date().getHours() >= +hour.value.split(':')[0]
-      const hourSum = new Date().getHours() === +hour.value.split(':')[0]? new Date().getMinutes() >= +hour.value.split(':')[1] :true
+      const hourSum = new Date().getHours() === +hour.value.split(':')[0]? new Date().getMinutes() >= +hour.value.split(':')[1] : false
       const filterDisabled = filterDate.filter(date => date.hour === hour.value)
-      const time = index !== 0 ? filterDate.filter(date => hours[index-1].value === date.hour):[]
-      const date = index !== 0? filterDate.filter(date => hours[index-1].value === date.hour).length > 0?
-      filterDate.filter(date => hours[index-1].value === date.hour)[0].typeCut.time:0:0
+      const time = index !== 0 ? filterDate.filter(date => hoursSelected[index-1].value === date.hour):[]
+      const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
+      filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
 
       let holidayDisabled = {inicio:0,fim:0}
       if(holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)){
@@ -119,6 +179,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
+      // console.log(holidayDisabled,hourFmt,((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim))
       return {
         disabled: 
         filterDisabled.length > 0 || 
@@ -305,21 +366,12 @@ router.post('/schedule', async (req, res) => {
     if (filterSchedule.length > 0) {
       return res.status(400).send('Já existe um horário agendado para esta data e hora')
     } else {
-      const userFilter = scheduleList.filter(el => {
-        return req.body.user.phone === el.user.phone
-      })
-      if (userFilter.length > 0 && new Date(req.body.date) > new Date()) {
-        return res.status(400).send('Já existe um horário cadastrado para este telefone')
-      } else {
+    
         const scheduleModel = await schedule.create(req.body);  
-        console.log(scheduleModel)
 
         sendMessage(`SEU CÓDIGO DE AGENDAMENTO É ${scheduleModel._id}`, '')
 
         return res.send({scheduleModel});
-      }
-
-
     }
 
 
@@ -366,15 +418,13 @@ const sendMessage = (message, phone) => {
   const phoneFormat = 'whatsapp:+55' + phone?phone.replace('-', '').replace('(', '').replace(')', ''):'991891072'
   require('dotenv');
   const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_TOKEN); ``
+  console.log(client)
   client.messages.create({
     from: 'whatsapp:+14155238886',
     body: message,
     to: 'whatsapp:+5515991891072'
   }).then(message => console.log(message.sid))
 }
-
-
-
 
 router.get('/infos',async (req,res) => {
   try{
