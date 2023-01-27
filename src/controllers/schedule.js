@@ -1,11 +1,11 @@
 const bodyParser = require('body-parser')
 const express = require('express')
 const moment = require('moment')
-
+const apiZap =  `https://api.z-api.io/instances/3B80290D5A60D07A7F1FCE30926D4D6E/token/6CA1C1553951E62A5FFFBFFA/send-messages`
 const schedule = require('../models/schedule')
 const user = require('../models/user')
 const holiday = require('../models/holiday')
-
+const axios = require('axios')
 const router = express.Router()
 
 const hourSabado = [{
@@ -140,6 +140,8 @@ const hours = [{
   disabled: true,
   value: '22:00:00'
 }]
+
+
 
 router.get('/schedule-hours/:date', async (req, res) => {
   try {
@@ -368,7 +370,7 @@ router.post('/schedule', async (req, res) => {
     
         const scheduleModel = await schedule.create(req.body);  
 
-        sendMessage(`SEU CÓDIGO DE AGENDAMENTO É ${scheduleModel._id}`, '')
+        sendMessage(req.body,scheduleModel._id)
 
         return res.send({scheduleModel});
     }
@@ -413,16 +415,23 @@ router.get('/schedule/:id', async (req, res) => {
   }
 })
 
-const sendMessage = (message, phone) => {
-  const phoneFormat = 'whatsapp:+55' + phone?phone.replace('-', '').replace('(', '').replace(')', ''):'991891072'
-  require('dotenv');
-  const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_TOKEN); ``
-  console.log(client)
-  client.messages.create({
-    from: 'whatsapp:+14155238886',
-    body: message,
-    to: 'whatsapp:+5515991891072'
-  }).then(message => console.log(message.sid))
+const sendMessage = (data,id) => {
+  axios.post('https://api.z-api.io/instances/3B80A4E1B7A6F00663A3CAEDFBA904AE/token/FE1D572D8EF8F335042FBF11/send-messages',
+{
+  phone:data.user.phone,
+  message:`Olá, ${data.user.name} seu agendamento foi concluído com sucesso!
+
+Aqui está seu id de agendamento 
+  ${id}
+  
+Compareça ao local da barbearia as ${data.hour} da data ${moment(data.date).format('DD/MM/YYYY')}
+  
+Qualquer dúvida estou a disposição!`
+}).then(response => {
+    console.log('mensagem enviada com sucesso!')
+}).catch(err => {
+
+})
 }
 
 router.get('/infos',async (req,res) => {
