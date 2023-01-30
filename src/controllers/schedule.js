@@ -429,15 +429,21 @@ const sendMessage = (data,id) => {
 {
   phone:data.user.phone,
   message:`Olá, ${data.user.name} seu agendamento foi concluído com sucesso!
-
-Aqui está seu id de agendamento 
-  ${id}
   
 Compareça ao local da barbearia as ${data.hour} da data ${moment(data.date).format('DD/MM/YYYY')}
   
+Segue id do agendamento abaixo
+
 Qualquer dúvida estou a disposição!`
 }).then(response => {
     console.log('mensagem enviada com sucesso!')
+    axios.post('https://api.z-api.io/instances/3B80A4E1B7A6F00663A3CAEDFBA904AE/token/FE1D572D8EF8F335042FBF11/send-messages',{
+      phone:data.user.phone,
+      message:id
+    }
+    ).then(response => {
+
+    })
 }).catch(err => {
 
 })
