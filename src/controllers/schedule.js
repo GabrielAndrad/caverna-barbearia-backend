@@ -36,6 +36,15 @@ const hourSabado = [{
   }, {
     disabled: false,
     value: '12:00:00'
+  }, {
+    disabled: false,
+    value: '12:30:00'
+  }, {
+    disabled: false,
+    value: '13:00:00'
+  }, {
+    disabled: false,
+    value: '13:30:00'
   },{
     disabled: false,
     value: '14:00:00'
@@ -172,7 +181,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
           if(moment(el.date).format('DD/MM/YYYY') === strData){
             holidayDisabled = {
               inicio:
-              inicio < holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
+              inicio > holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
               fim:
               fim > holidayDisabled.fim?fim:holidayDisabled.fim}
           }
@@ -180,6 +189,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
+      console.log(hourFmt,holidayDisabled)
       return {
         disabled: 
         filterDisabled.length > 0 || 
@@ -192,7 +202,6 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
 
     })
-    console.log(setHours)
     return res.send(setHours)
   } catch (err) {
     console.log(err)
