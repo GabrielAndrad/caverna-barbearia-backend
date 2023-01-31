@@ -42,16 +42,16 @@ router.get('/hasSendMessage',async (req,res) => {
       let send = false
       users.forEach((el) => {
        if(el.phone === req.body.phone && (moment(el.dateMessage).format('DD/MM/YYYY') === moment(new Date()).format('DD/MM/YYYY'))){
-        res.send(true)
+        res.send('true')
         send = true
        } 
       })
 
       if(!send){
-        res.send(false)
+        res.send('false')
       }
     } else {
-      res.send(false)
+      res.send('false')
     }
   } catch(err){
 
