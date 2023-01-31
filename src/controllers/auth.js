@@ -67,11 +67,12 @@ router.post('/register', async (req,res) => {
     users.forEach((el) => {
       if(el.phone === req.body.phone){
         exists = true
+        user.findByIdAndUpdate(el._id,req.body)
       }
     })
 
     if(exists){
-      res.send('Usuário já existe')
+      res.send('Usuário atualizado')
     } else {
       const userModel = await user.create(req.body);
       return res.send({ userModel });
