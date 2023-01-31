@@ -412,7 +412,7 @@ router.delete('/schedule/:id', async (req, res) => {
       phone:id.user.phone,
       message:`Olá, ${id.user.name} seu agendamento foi cancelado com sucesso!
 
- Hora: ${id.hour} Data: ${moment(id.date).format('DD/MM/YYYY')}
+Hora: ${id.hour} Data: ${moment(id.date).format('DD/MM/YYYY')}
 
 Qualquer dúvida estou à disposição!`
     })
