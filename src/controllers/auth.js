@@ -67,7 +67,8 @@ router.post('/register', async (req,res) => {
     users.forEach((el) => {
       if(el.phone === req.body.phone){
         exists = true
-        user.findByIdAndUpdate(el._id,req.body)
+        console.log(el._id,el.id)
+        user.findByIdAndUpdate(el.id,req.body)
       }
     })
 
