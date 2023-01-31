@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser')
 const express = require('express')
+const moment = require('moment')
 
 
 const user = require('../models/user')
@@ -10,6 +11,7 @@ const router = express.Router()
 router.get(`/users`,async (req,res) => {
     try{
       const users = await user.find()
+             
       return res.send(users)
     }catch (err) {
       return res.send('Falha ao carregar usuários')
@@ -32,6 +34,7 @@ router.delete('/user/',async (req,res) => {
 })
 router.post('/register', async (req,res) => {
   try{
+    req.body.dateMessage = new Date()
     const userModel = await user.create(req.body);
     
 
