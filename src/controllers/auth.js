@@ -61,19 +61,19 @@ router.post('/register', async (req,res) => {
   try{
     req.body.dateMessage = new Date()
     const users = await user.find()
-    
+
     let exists = false
 
     users.forEach((el) => {
       if(el.phone === req.body.phone){
         exists = true
-        console.log(el._id,el.id)
-        user.findByIdAndUpdate(el.id,req.body)
       }
     })
 
     if(exists){
-      res.send('Usuário atualizado')
+      const userId = users.filter(el => el.phone === req.body.phone)[0].id
+      await user.findByIdAndUpdate(userId,req.body)
+      res.send({user:userId,body:req.body})
     } else {
       const userModel = await user.create(req.body);
       return res.send({ userModel });
