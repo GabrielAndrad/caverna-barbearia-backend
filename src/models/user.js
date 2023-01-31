@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: 'String',
     required:true,
+  },
+  dateMessage: {
+    type: 'String',
+    required: true
   }
 })
 
