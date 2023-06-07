@@ -13,7 +13,6 @@ require('./controllers/schedule')(app);
 require('./controllers/holiday')(app);
 
 app.get('',(req,res) => {
-
   res.send(process.env.MONGO_URL)
 })
 

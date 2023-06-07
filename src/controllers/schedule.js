@@ -189,7 +189,6 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
-      console.log(hourFmt,holidayDisabled)
       return {
         disabled: 
         filterDisabled.length > 0 || 
@@ -370,9 +369,14 @@ router.post('/schedule', async (req, res) => {
   try {
     const scheduleList = await schedule.find()
 
+    if(new Date(req.body.date).getDay() === 0 || new Date(req.body.date).getDay() === 1){
+      return res.status(400).send('Barbearia fechada se domingo e segunda, favor marcar outro horario!')
+    }
+
     const filterSchedule = scheduleList.filter(el => {
       return (req.body.date === el.date) && (req.body.hour === el.hour)
     })
+
     if (filterSchedule.length > 0) {
       return res.status(400).send('Já existe um horário agendado para esta data e hora')
     } else {
