@@ -148,6 +148,21 @@ const hours = [{
 },{
   disabled: true,
   value: '22:00:00'
+},{
+  disabled: true,
+  value: '22:30:00'
+},{
+  disabled: true,
+  value: '23:00:00'
+},{
+  disabled: true,
+  value: '23:30:00'
+},{
+  disabled: true,
+  value: '24:00:00'
+},{
+  disabled: true,
+  value: '24:30:00'
 }]
 
 
@@ -163,7 +178,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     })
     const holidays = await holiday.find()
-    const hoursSelected = data.getDay() === 6?hourSabado:hours
+    const hoursSelected = data.getDay() === 6 && data.getDate() != 23?hourSabado:hours
     const setHours = hoursSelected.map((hour,index) => {
       
       const sum = new Date().getHours() >= +hour.value.split(':')[0]
@@ -173,20 +188,20 @@ router.get('/schedule-hours/:date', async (req, res) => {
       const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
       filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
 
-      let holidayDisabled = {inicio:0,fim:0}
-      if(holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)){
-        holidays.forEach((el) => {
-          let inicio = +(el.inicio.split(':')[0]+'.'+el.inicio.split(':')[1])
-          let fim = +(el.fim.split(':')[0]+'.'+el.fim.split(':')[1])
-          if(moment(el.date).format('DD/MM/YYYY') === strData){
-            holidayDisabled = {
-              inicio:
-              inicio > holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
-              fim:
-              fim > holidayDisabled.fim?fim:holidayDisabled.fim}
-          }
-        })
-      }
+      // let holidayDisabled = {inicio:0,fim:0}
+      // if(holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)){
+      //   holidays.forEach((el) => {
+      //     let inicio = +(el.inicio.split(':')[0]+'.'+el.inicio.split(':')[1])
+      //     let fim = +(el.fim.split(':')[0]+'.'+el.fim.split(':')[1])
+      //     if(moment(el.date).format('DD/MM/YYYY') === strData){
+      //       holidayDisabled = {
+      //         inicio:
+      //         inicio > holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
+      //         fim:
+      //         fim > holidayDisabled.fim?fim:holidayDisabled.fim}
+      //     }
+      //   })
+      // }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
       return {
@@ -194,9 +209,19 @@ router.get('/schedule-hours/:date', async (req, res) => {
         filterDisabled.length > 0 || 
         (date === 2 && time.length > 0 && hourFmt !== 14) || 
         (new Date() > data && sum && hourSum) ||
-         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
-         hourFmt > 20.3 || hourFmt === 9
-        ,
+        //  ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
+         
+        // hourFmt > 20.3 ||
+         hourFmt === 9 ||
+         (data.getDate() == 29 && ((+hour.value.split(":")[0] == 9) || +hour.value.split(":")[0] > 17))||
+         (data.getDate() == 24 && ((+hour.value.split(":")[0] == 9) || +hour.value.split(":")[0] > 14))||
+         data.getDate() >=12 && data.getDate() <=18 && +hour.value.split(":")[0] > 22||
+         data.getDate() >=18 && data.getDate() <=22 && +hour.value.split(":")[0] > 24||
+         data.getDate() >=26 && data.getDate() <=28 && +hour.value.split(":")[0] > 22
+
+         ,
+
+         
         value: hour.value
       }
 
