@@ -369,9 +369,9 @@ router.post('/schedule', async (req, res) => {
   try {
     const scheduleList = await schedule.find()
 
-    if(new Date(req.body.date).getDay() === 0 || new Date(req.body.date).getDay() === 1){
-      return res.status(400).send('Barbearia fechada se domingo e segunda, favor marcar outro horario!')
-    }
+    // if(new Date(req.body.date).getDay() === 0 || new Date(req.body.date).getDay() === 1){
+    //   return res.status(400).send('Barbearia fechada se domingo e segunda, favor marcar outro horario!')
+    // }
 
     const filterSchedule = scheduleList.filter(el => {
       return (req.body.date === el.date) && (req.body.hour === el.hour)
