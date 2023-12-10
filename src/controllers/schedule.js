@@ -212,13 +212,14 @@ router.get('/schedule-hours/:date', async (req, res) => {
         //  ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
          
         // hourFmt > 20.3 ||
-         hourFmt === 9 ||
-         (data.getDate() == 29 && ((+hour.value.split(":")[0] == 9) || +hour.value.split(":")[0] > 17))||
-         (data.getDate() == 24 && ((+hour.value.split(":")[0] == 9) || +hour.value.split(":")[0] > 14))||
+        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 )||
+         
+         (data.getDate() == 29 && ((hourFmt < 9.3) || +hour.value.split(":")[0] > 17))||
+         (data.getDate() == 24 && ((hourFmt < 9.3) || +hour.value.split(":")[0] > 14))||
          data.getDate() >=12 && data.getDate() <=18 && +hour.value.split(":")[0] > 22||
          data.getDate() >=18 && data.getDate() <=22 && +hour.value.split(":")[0] > 24||
-         data.getDate() >=26 && data.getDate() <=28 && +hour.value.split(":")[0] > 22
-
+         data.getDate() >=26 && data.getDate() <=28 && +hour.value.split(":")[0] > 22||
+         data.getDate() == 30
          ,
 
          
