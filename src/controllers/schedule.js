@@ -220,8 +220,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
          data.getDate() >=18 && data.getDate() <=22 && +hour.value.split(":")[0] > 24||
          data.getDate() >=26 && data.getDate() <=28 && +hour.value.split(":")[0] > 22||
          data.getDate() == 30 ||
-         data.getDate() == 1 ||
-         data.getDate() == 2
+         data.getDate() == 2 ||
+         data.getDate() == 3
          ,
 
          
