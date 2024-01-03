@@ -210,22 +210,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
         (date === 2 && time.length > 0 && hourFmt !== 14) || 
         (new Date() > data && sum && hourSum) ||
         //  ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
-         
-        // hourFmt > 20.3 ||
-        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 )||
-         
-         (data.getDate() == 29 && ((hourFmt < 9.3) || +hour.value.split(":")[0] > 17))||
-         (data.getDate() == 24 && ((hourFmt < 9.3) || +hour.value.split(":")[0] > 14))||
-         data.getDate() >=12 && data.getDate() <=18 && +hour.value.split(":")[0] > 22||
-         data.getDate() >=18 && data.getDate() <=22 && +hour.value.split(":")[0] > 24||
-         data.getDate() >=26 && data.getDate() <=28 && +hour.value.split(":")[0] > 22||
-         data.getDate() == 30 ||
-         data.getDate() == 2 ||
-         data.getDate() == 3 ||
-         data.getMonth() == 0 && +hour.value.split(":")[0] > 20
-         ,
-
-         
+        hourFmt > 20.3 ||
+        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 ),   
         value: hour.value
       }
 
