@@ -188,20 +188,20 @@ router.get('/schedule-hours/:date', async (req, res) => {
       const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
       filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
 
-      // let holidayDisabled = {inicio:0,fim:0}
-      // if(holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)){
-      //   holidays.forEach((el) => {
-      //     let inicio = +(el.inicio.split(':')[0]+'.'+el.inicio.split(':')[1])
-      //     let fim = +(el.fim.split(':')[0]+'.'+el.fim.split(':')[1])
-      //     if(moment(el.date).format('DD/MM/YYYY') === strData){
-      //       holidayDisabled = {
-      //         inicio:
-      //         inicio > holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
-      //         fim:
-      //         fim > holidayDisabled.fim?fim:holidayDisabled.fim}
-      //     }
-      //   })
-      // }
+      let holidayDisabled = {inicio:0,fim:0}
+      if(holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)){
+        holidays.forEach((el) => {
+          let inicio = +(el.inicio.split(':')[0]+'.'+el.inicio.split(':')[1])
+          let fim = +(el.fim.split(':')[0]+'.'+el.fim.split(':')[1])
+          if(moment(el.date).format('DD/MM/YYYY') === strData){
+            holidayDisabled = {
+              inicio:
+              inicio > holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
+              fim:
+              fim > holidayDisabled.fim?fim:holidayDisabled.fim}
+          }
+        })
+      }
    
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
       return {
@@ -209,7 +209,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
         filterDisabled.length > 0 || 
         (date === 2 && time.length > 0 && hourFmt !== 14) || 
         (new Date() > data && sum && hourSum) ||
-        //  ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
+         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
         hourFmt > 20.3 ||
         (data.getDay() === 6?hourFmt === 8:hourFmt === 9 ),   
         value: hour.value
