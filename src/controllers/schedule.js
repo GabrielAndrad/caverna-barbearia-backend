@@ -424,6 +424,8 @@ router.put('/schedule/:id', async (req, res) => {
 
 router.delete('/schedule/:id', async (req, res) => {
   try {
+    const clientToken = 'F55e38689648f46de9912e392954af021S';
+
     const id = await schedule.findById(req.params.id)
     await schedule.findByIdAndDelete(req.params.id)
     axios.post('https://api.z-api.io/instances/3B80A4E1B7A6F00663A3CAEDFBA904AE/token/FE1D572D8EF8F335042FBF11/send-messages',
@@ -434,6 +436,10 @@ router.delete('/schedule/:id', async (req, res) => {
 Hora: ${id.hour} Data: ${moment(id.date).format('DD/MM/YYYY')}
 
 Qualquer dúvida estou à disposição!`
+    },{
+      headers: {
+        'Client-Token': clientToken,
+      },
     })
     return res.send(`Agenda excluida com sucesso! ${req.params.id}`)
   } catch (err) {
