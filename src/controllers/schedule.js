@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser')
 const express = require('express')
 const moment = require('moment')
-const apiZap =  `https://api.z-api.io/instances/3B80290D5A60D07A7F1FCE30926D4D6E/token/6CA1C1553951E62A5FFFBFFA/send-messages`
+const apiZap =  `https://api.z-api.io/instances/3B80290D5A60D07A7F1FCE30926D4D6E/token/6CA1C1553951E62A5FFFBFFA/send-messages?cliente`
 const schedule = require('../models/schedule')
 const user = require('../models/user')
 const holiday = require('../models/holiday')
@@ -454,6 +454,8 @@ router.get('/schedule/:id', async (req, res) => {
 })
 
 const sendMessage = (data,id) => {
+  const clientToken = 'F55e38689648f46de9912e392954af021S';
+
   axios.post('https://api.z-api.io/instances/3B80A4E1B7A6F00663A3CAEDFBA904AE/token/FE1D572D8EF8F335042FBF11/send-messages',
 {
   phone:data.user.phone,
@@ -464,11 +466,19 @@ Compareça ao local da barbearia as ${data.hour} da data ${moment(data.date).for
 Segue id do agendamento abaixo
 
 Qualquer dúvida estou a disposição!`
+},{
+  headers: {
+    'Client-Token': clientToken,
+  },
 }).then(response => {
     console.log('mensagem enviada com sucesso!')
     axios.post('https://api.z-api.io/instances/3B80A4E1B7A6F00663A3CAEDFBA904AE/token/FE1D572D8EF8F335042FBF11/send-messages',{
       phone:data.user.phone,
       message:id
+    },{
+      headers: {
+        'Client-Token': clientToken,
+      },
     }
     ).then(response => {
 
