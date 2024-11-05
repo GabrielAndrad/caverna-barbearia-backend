@@ -560,14 +560,14 @@ router.get('/infos',async (req,res) => {
       }
      },
      priceService: {
-      total:(schedulesType1.length*30) + (schedulesType2.length*25) + (schedulesType3.length*25) + (schedulesType4.length*15) + (schedulesType5.length*50) + (schedulesType6.length*50),
+      total:(schedulesType1.length*35) + (schedulesType2.length*30) + (schedulesType3.length*30) + (schedulesType4.length*15) + (schedulesType5.length*60) + (schedulesType6.length*60),
       types:{
-        Degradê: schedulesType1.length*30,
-        Tradicional: schedulesType2.length*25,
-        Barba: schedulesType3.length*25,
+        Degradê: schedulesType1.length*35,
+        Tradicional: schedulesType2.length*30,
+        Barba: schedulesType3.length*30,
         Pézinho: schedulesType4.length*15,
-        'Degradê + Barba':schedulesType5.length*50,
-        'Tradicional + Barba':schedulesType6.length*50
+        'Degradê + Barba':schedulesType5.length*60,
+        'Tradicional + Barba':schedulesType6.length*60
       }
      }
     }
