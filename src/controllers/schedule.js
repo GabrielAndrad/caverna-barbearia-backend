@@ -207,47 +207,45 @@ router.get('/schedule-hours/:date', async (req, res) => {
         });
 
       // Regras específicas para dezembro
-      let isDecemberDisabled = false; // Por padrão, horários após as 20h são desabilitados
+      let isDecemberDisabled = hourFmt >= 20; // Por padrão, horários após as 20h são desabilitados
 
       if (isDecember) {
         // Exceções para certos dias de dezembro
-        if ([17, 18, 19, 20, 21,23,26,27,28].includes(dayOfMonth)) {
-          // Habilita todos os horários entre 9h e 23h, sem desabilitar os horários após 20h
-          if (hourFmt >= 9 && hourFmt <= 23) {
+        if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
+          // Habilita horários das 9:30 até as 23h nos dias de 17 a 21/12
+          if (hourFmt >= 9.5 && hourFmt <= 23) {
             isDecemberDisabled = false;
-            hour.disabled = false; // Habilita horários das 9h às 23h
           }
-        } else {
-          // Para outros dias de dezembro, mantém a regra de desabilitar após 20h
-          if (hourFmt > 20) {
-            isDecemberDisabled = true; 
-            hour.disabled = true// Desabilita após as 20h
+        } else if (dayOfMonth === 22) {
+          // Habilita horários das 10h até as 18h no dia 22/12
+          if (hourFmt >= 10 && hourFmt <= 18) {
+            isDecemberDisabled = false;
           }
-        }
-
-        if (dayOfMonth === 22 && hourFmt <= 18) {
-          isDecemberDisabled = false;
-          hour.disabled = false// Desabilita após as 20h
-          // Horários até as 18h no dia 22/12
-        }
-
-        if (dayOfMonth === 24 && hourFmt <= 12) {
-          isDecemberDisabled = false; 
-          hour.disabled = false// Desabilita após as 20h
-          // Horários até as 12h no dia 24/12
-        }
-
-        if (dayOfMonth === 29 && hourFmt <= 18) {
-          isDecemberDisabled = false; 
-          hour.disabled = false// Desabilita após as 20h
-          // Horários até as 18h no dia 29/12
+        } else if (dayOfMonth === 23) {
+          // Habilita horários das 9:30 até as 23h no dia 23/12
+          if (hourFmt >= 9.5 && hourFmt <= 23) {
+            isDecemberDisabled = false;
+          }
+        } else if (dayOfMonth === 24) {
+          // Habilita horários das 9:30 até as 12h no dia 24/12
+          if (hourFmt >= 9.5 && hourFmt <= 12) {
+            isDecemberDisabled = false;
+          }
+        } else if ([26, 27, 28].includes(dayOfMonth)) {
+          // Habilita horários das 9:30 até as 23h de 26 a 28/12
+          if (hourFmt >= 9.5 && hourFmt <= 23) {
+            isDecemberDisabled = false;
+          }
+        } else if (dayOfMonth === 29) {
+          // Habilita horários das 9:30 até as 18h no dia 29/12
+          if (hourFmt >= 9.5 && hourFmt <= 18) {
+            isDecemberDisabled = false;
+          }
         }
 
         // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
-        if (dayOfMonth === 25 || dayOfMonth === 30 || dayOfMonth === 31 || dayOfMonth === 1) {
-          isDecemberDisabled = true; 
-          hour.disabled = true// Desabilita após as 20h
-          // Fechado nesses dias
+        if ([25, 30, 31, 1].includes(dayOfMonth)) {
+          isDecemberDisabled = true; // Fechado nesses dias
         }
       }
 
