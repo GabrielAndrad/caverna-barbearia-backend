@@ -288,7 +288,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
            // Regras específicas para dezembro
         value: hour.value,
         text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart,date: (date === 2 && time.length > 0 && hourFmt !== 14) || 
-          (new Date() > data && sum && hourSum) ||}
+          (new Date() > data && sum && hourSum)}
       };
     });
 
