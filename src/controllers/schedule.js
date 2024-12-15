@@ -282,13 +282,11 @@ router.get('/schedule-hours/:date', async (req, res) => {
         disabled:
           filterDisabled || // Agendamento já feito
           holidayDisabled || // Desabilitado por feriado
-          (date === 2 && time.length > 0 && hourFmt !== 14) || 
-          (new Date() > data && sum && hourSum) ||
+          (date === 2 && time.length > 0 && hourFmt !== 14) 
           (hour.disabled),
            // Regras específicas para dezembro
         value: hour.value,
-        text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart,date: (date === 2 && time.length > 0 && hourFmt !== 14) || 
-          (new Date() > data && sum && hourSum)}
+        text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart,date: (date === 2 && time.length > 0 && hourFmt !== 14)}
       };
     });
 
