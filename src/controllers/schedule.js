@@ -207,37 +207,47 @@ router.get('/schedule-hours/:date', async (req, res) => {
         });
 
       // Regras específicas para dezembro
-      let isDecemberDisabled = hourFmt >= 20; // Por padrão, horários após as 20h são desabilitados
+      let isDecemberDisabled = false; // Por padrão, horários após as 20h são desabilitados
 
       if (isDecember) {
         // Exceções para certos dias de dezembro
         if ([17, 18, 19, 20, 21,23,26,27,28].includes(dayOfMonth)) {
           // Habilita todos os horários entre 9h e 23h, sem desabilitar os horários após 20h
           if (hourFmt >= 9 && hourFmt <= 23) {
-            isDecemberDisabled = false; // Habilita horários das 9h às 23h
+            isDecemberDisabled = false;
+            hour.disabled = false; // Habilita horários das 9h às 23h
           }
         } else {
           // Para outros dias de dezembro, mantém a regra de desabilitar após 20h
           if (hourFmt > 20) {
-            isDecemberDisabled = true; // Desabilita após as 20h
+            isDecemberDisabled = true; 
+            hour.disabled = true// Desabilita após as 20h
           }
         }
 
         if (dayOfMonth === 22 && hourFmt <= 18) {
-          isDecemberDisabled = false; // Horários até as 18h no dia 22/12
+          isDecemberDisabled = false;
+          hour.disabled = false// Desabilita após as 20h
+          // Horários até as 18h no dia 22/12
         }
 
         if (dayOfMonth === 24 && hourFmt <= 12) {
-          isDecemberDisabled = false; // Horários até as 12h no dia 24/12
+          isDecemberDisabled = false; 
+          hour.disabled = false// Desabilita após as 20h
+          // Horários até as 12h no dia 24/12
         }
 
         if (dayOfMonth === 29 && hourFmt <= 18) {
-          isDecemberDisabled = false; // Horários até as 18h no dia 29/12
+          isDecemberDisabled = false; 
+          hour.disabled = false// Desabilita após as 20h
+          // Horários até as 18h no dia 29/12
         }
 
         // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
         if (dayOfMonth === 25 || dayOfMonth === 30 || dayOfMonth === 31 || dayOfMonth === 1) {
-          isDecemberDisabled = true; // Fechado nesses dias
+          isDecemberDisabled = true; 
+          hour.disabled = true// Desabilita após as 20h
+          // Fechado nesses dias
         }
       }
 
