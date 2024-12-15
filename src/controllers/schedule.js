@@ -308,8 +308,14 @@ router.get('/schedule-hours/:date', async (req, res) => {
     const filterDate = schedules.filter(el => {
       return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     })
+    const isDecember = data.getMonth() === 11; // Dezembro
+    const dayOfMonth = data.getDate();
+    const dayOfWeek = data.getDay();
+
     const holidays = await holiday.find()
-    const hoursSelected = data.getDay() === 6 && data.getDate() != 21 && data.getDate() != 28?hourSabado:hours
+    // const hoursSelected = data.getDay() === 6 && data.getDate() != 21 && data.getDate() != 28?hourSabado:hours
+    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 28 ? hourSabado : hours;
+
     const setHours = hoursSelected.map((hour,index) => {
 
       const sum = new Date().getHours() >= +hour.value.split(':')[0]
@@ -333,9 +339,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
           }
         })
       }
-    const isDecember = data.getMonth() === 11; // Dezembro
-    const dayOfMonth = data.getDate();
-    const dayOfWeek = data.getDay();
+      const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
+
     
       if (isDecember) {
                 // Exceções para certos dias de dezembro
@@ -403,7 +408,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
               }
         
 
-      const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
+      
       return {
         disabled: 
         filterDisabled.length > 0 || 
