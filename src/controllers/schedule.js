@@ -309,7 +309,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     })
     const holidays = await holiday.find()
-    const hoursSelected = data.getDay() === 6 && data.getDate() != 23?hourSabado:hours
+    const hoursSelected = data.getDay() === 6 && data.getDate() != 21 && data.getDate() != 28?hourSabado:hours
     const setHours = hoursSelected.map((hour,index) => {
 
       const sum = new Date().getHours() >= +hour.value.split(':')[0]
@@ -333,16 +333,87 @@ router.get('/schedule-hours/:date', async (req, res) => {
           }
         })
       }
+    const isDecember = data.getMonth() === 11; // Dezembro
+    const dayOfMonth = data.getDate();
+    const dayOfWeek = data.getDay();
+    
+      if (isDecember) {
+                // Exceções para certos dias de dezembro
+                if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
+                  // Habilita horários das 9:30 até as 23h nos dias de 17 a 21/12
+                  if (hourFmt >= 9.5 && hourFmt <= 23) {
+                    hour.text = hourFmt;
+                    hour.disabled = false;
+                  } else {
+                    hour.text = hourFmt;
+                    hour.disabled = true;
+                  }
+                } else if (dayOfMonth === 22) {
+                  // Habilita horários das 10h até as 18h no dia 22/12
+                  if (hourFmt >= 10 && hourFmt <= 18) {
+                    hour.text = hourFmt;
+                    hour.disabled = false;
+                  } else {
+                    hour.text = hourFmt;
+                    hour.disabled = true;
+                  }
+                } else if (dayOfMonth === 23) {
+                  // Habilita horários das 9:30 até as 23h no dia 23/12
+                  if (hourFmt >= 9.5 && hourFmt <= 23) {
+                    hour.text = hourFmt;
+                    hour.disabled = false;
+                  } else {
+                    hour.text = hourFmt;
+                    hour.disabled = true;
+                  }
+                } else if (dayOfMonth === 24) {
+                  // Habilita horários das 9:30 até as 12h no dia 24/12
+                  if (hourFmt >= 9.5 && hourFmt <= 12) {
+                    hour.text = hourFmt;
+                    hour.disabled = false;
+                  } else {
+                    hour.text = hourFmt;
+                    hour.disabled = true;
+                  }
+                } else if ([26, 27, 28].includes(dayOfMonth)) {
+                  // Habilita horários das 9:30 até as 23h de 26 a 28/12
+                  if (hourFmt >= 9.5 && hourFmt <= 23) {
+                    hour.text = hourFmt;
+                    hour.disabled = false;
+                  } else {
+                    hour.text = hourFmt;
+                    hour.disabled = true;
+                  }
+                } else if (dayOfMonth === 29) {
+                  // Habilita horários das 9:30 até as 18h no dia 29/12
+                  if (hourFmt >= 9.5 && hourFmt <= 18) {
+                    hour.text = hourFmt;
+                    hour.disabled = false;
+                  } else {
+                    hour.text = hourFmt;
+                    hour.disabled = true;
+                  }
+                }
+        
+                // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
+                if ([25, 30, 31, 1].includes(dayOfMonth)) {
+                  hour.text = hourFmt;
+                  hour.disabled = true; // Fechado nesses dias
+                }
+              }
+        
 
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
       return {
         disabled: 
         filterDisabled.length > 0 || 
         (date === 2 && time.length > 0 && hourFmt !== 14) || 
+        hour.disabled || 
         (new Date() > data && sum && hourSum) ||
-         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
-        hourFmt > 20.3 ||
-        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 ),   
+         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim)
+        // hourFmt > 20.3 ||
+        // (data.getDay() === 6?hourFmt === 8:hourFmt === 9 )
+        ,   
         value: hour.value
       }
 
