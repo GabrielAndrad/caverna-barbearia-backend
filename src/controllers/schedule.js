@@ -183,7 +183,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     );
 
-    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 ? hourSabado : hours;
+    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 29 ? hourSabado : hours;
 
     const setHours = hoursSelected.map((hour) => {
       const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extrai hora e minuto
@@ -215,6 +215,9 @@ router.get('/schedule-hours/:date', async (req, res) => {
           if (hourFmt >= 9.5 && hourFmt <= 23) {
             hour.text = hourFmt;
             hour.disabled = false;
+          } else {
+            hour.text = hourFmt;
+            hour.disabled = true;
           }
         } else if (dayOfMonth === 22) {
           // Habilita horários das 10h até as 18h no dia 22/12
@@ -248,6 +251,9 @@ router.get('/schedule-hours/:date', async (req, res) => {
           if (hourFmt >= 9.5 && hourFmt <= 23) {
             hour.text = hourFmt;
             hour.disabled = false;
+          } else {
+            hour.text = hourFmt;
+            hour.disabled = true;
           }
         } else if (dayOfMonth === 29) {
           // Habilita horários das 9:30 até as 18h no dia 29/12
@@ -256,7 +262,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
             hour.disabled = false;
           } else {
             hour.text = hourFmt;
-            hour.disabled = false;
+            hour.disabled = true;
           }
         }
 
