@@ -191,7 +191,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
 
       const currentHour = new Date().getHours();
       const currentMinute = new Date().getMinutes();
-      const isPast = currentHour > hourPart || (currentHour === hourPart && currentMinute >= minutePart);
+      const currentDay = new Date().getDate();
+      // const isPast = dayOfMonth > &&currentHour > hourPart || (currentHour === hourPart && currentMinute >= minutePart);
 
       const filterDisabled = filterDate.some(date => date.hour === hour.value);
 
@@ -257,7 +258,6 @@ router.get('/schedule-hours/:date', async (req, res) => {
       return {
         disabled:
           filterDisabled || // Agendamento já feito
-          isPast || // Horário no passado
           holidayDisabled || // Desabilitado por feriado
           (hour.disabled), // Regras específicas para dezembro
         value: hour.value,
