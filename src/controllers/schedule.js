@@ -187,7 +187,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
 
     const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 23 ? hourSabado : hours;
 
-    const setHours = hoursSelected.map((hour, index) => {
+    const setHours = hoursSelected.map((hour) => {
       const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extrai hora e minuto
       const hourFmt = hourPart + minutePart / 60; // Formato decimal
 
@@ -209,33 +209,23 @@ router.get('/schedule-hours/:date', async (req, res) => {
         });
 
       // Regras específicas para dezembro
+      let isDecemberDisabled = hourFmt >= 20; // Por padrão, horários após as 20h são desabilitados
+
       if (isDecember) {
-        if ([25, 30, 31].includes(dayOfMonth) || (dayOfMonth === 1 && data.getMonth() === 0)) {
-          return { disabled: true, value: hour.value }; // Fechado
+        if ([17, 18, 19, 20, 21, 23, 26, 27, 28].includes(dayOfMonth) && hourFmt <= 23) {
+          isDecemberDisabled = false; // Exceções: Horários até as 23h
         }
 
-        if (dayOfMonth >= 17 && dayOfMonth <= 21 && (hourFmt < 9.5 || hourFmt > 23)) {
-          return { disabled: true, value: hour.value };
+        if (dayOfMonth === 22 && hourFmt <= 18) {
+          isDecemberDisabled = false; // Exceção: Horários até as 18h
         }
 
-        if (dayOfMonth === 22 && (hourFmt < 10 || hourFmt > 18)) {
-          return { disabled: true, value: hour.value };
+        if (dayOfMonth === 24 && hourFmt <= 12) {
+          isDecemberDisabled = false; // Exceção: Horários até as 12h
         }
 
-        if (dayOfMonth === 23 && (hourFmt < 9.5 || hourFmt > 23)) {
-          return { disabled: true, value: hour.value };
-        }
-
-        if (dayOfMonth === 24 && (hourFmt < 9.5 || hourFmt > 12)) {
-          return { disabled: true, value: hour.value };
-        }
-
-        if (dayOfMonth >= 26 && dayOfMonth <= 28 && (hourFmt < 9.5 || hourFmt > 23)) {
-          return { disabled: true, value: hour.value };
-        }
-
-        if (dayOfMonth === 29 && (hourFmt < 9.5 || hourFmt > 18)) {
-          return { disabled: true, value: hour.value };
+        if (dayOfMonth === 29 && hourFmt <= 18) {
+          isDecemberDisabled = false; // Exceção: Horários até as 18h
         }
       }
 
@@ -244,7 +234,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
           filterDisabled || // Agendamento já feito
           isPast || // Horário no passado
           holidayDisabled || // Desabilitado por feriado
-          hour.disabled, // Padrão de desabilitação
+          hour.disabled || // Padrão de desabilitação
+          isDecemberDisabled, // Regras específicas para dezembro
         value: hour.value,
       };
     });
@@ -255,6 +246,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
     return res.status(500).send([]);
   }
 });
+
 
 //return all schedules
 router.get('/schedule', async (req, res) => {
