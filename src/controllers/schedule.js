@@ -221,18 +221,27 @@ router.get('/schedule-hours/:date', async (req, res) => {
           if (hourFmt >= 10 && hourFmt <= 18) {
             hour.text = hourFmt;
             hour.disabled = false;
+          } else {
+            hour.text = hourFmt;
+            hour.disabled = true;
           }
         } else if (dayOfMonth === 23) {
           // Habilita horários das 9:30 até as 23h no dia 23/12
           if (hourFmt >= 9.5 && hourFmt <= 23) {
             hour.text = hourFmt;
             hour.disabled = false;
+          } else {
+            hour.text = hourFmt;
+            hour.disabled = true;
           }
         } else if (dayOfMonth === 24) {
           // Habilita horários das 9:30 até as 12h no dia 24/12
           if (hourFmt >= 9.5 && hourFmt <= 12) {
             hour.text = hourFmt;
             hour.disabled = false;
+          } else {
+            hour.text = hourFmt;
+            hour.disabled = true;
           }
         } else if ([26, 27, 28].includes(dayOfMonth)) {
           // Habilita horários das 9:30 até as 23h de 26 a 28/12
@@ -243,6 +252,9 @@ router.get('/schedule-hours/:date', async (req, res) => {
         } else if (dayOfMonth === 29) {
           // Habilita horários das 9:30 até as 18h no dia 29/12
           if (hourFmt >= 9.5 && hourFmt <= 18) {
+            hour.text = hourFmt;
+            hour.disabled = false;
+          } else {
             hour.text = hourFmt;
             hour.disabled = false;
           }
