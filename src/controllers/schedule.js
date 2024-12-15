@@ -206,9 +206,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
           return hourFmt > start && hourFmt < end;
         });
 
-      // Regras específicas para dezembro
-      let isDecemberDisabled = hourFmt >= 20; // Por padrão, horários após as 20h são desabilitados
-
+      
       if (isDecember) {
         // Exceções para certos dias de dezembro
         if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
@@ -263,7 +261,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
           holidayDisabled || // Desabilitado por feriado
           (hour.disabled), // Regras específicas para dezembro
         value: hour.value,
-        text: hour.text
+        text: hour.text + filterDisabled + isPast + holidayDisabled + hour.disabled
       };
     });
 
