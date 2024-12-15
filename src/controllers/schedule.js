@@ -166,7 +166,6 @@ const hours = [{
   value: '24:30:00'
 }]
 
-
 router.get('/schedule-hours/:date', async (req, res) => {
   try {
     const schedules = await schedule.find();
@@ -184,7 +183,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     );
 
-    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 23 ? hourSabado : hours;
+    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 ? hourSabado : hours;
 
     const setHours = hoursSelected.map((hour) => {
       const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extrai hora e minuto
@@ -212,8 +211,16 @@ router.get('/schedule-hours/:date', async (req, res) => {
 
       if (isDecember) {
         // Exceções para certos dias de dezembro
-        if ([17, 18, 19, 20, 21, 23, 26, 27, 28].includes(dayOfMonth) && hourFmt <= 23) {
-          isDecemberDisabled = false; // Horários até as 23h
+        if ([17, 18, 19, 20, 21,23,26,27,28].includes(dayOfMonth)) {
+          // Habilita todos os horários entre 9h e 23h, sem desabilitar os horários após 20h
+          if (hourFmt >= 9 && hourFmt <= 23) {
+            isDecemberDisabled = false; // Habilita horários das 9h às 23h
+          }
+        } else {
+          // Para outros dias de dezembro, mantém a regra de desabilitar após 20h
+          if (hourFmt > 20) {
+            isDecemberDisabled = true; // Desabilita após as 20h
+          }
         }
 
         if (dayOfMonth === 22 && hourFmt <= 18) {
@@ -232,11 +239,6 @@ router.get('/schedule-hours/:date', async (req, res) => {
         if (dayOfMonth === 25 || dayOfMonth === 30 || dayOfMonth === 31 || dayOfMonth === 1) {
           isDecemberDisabled = true; // Fechado nesses dias
         }
-
-        // Habilitar horários acima de 20h
-        if (hourFmt > 20) {
-          isDecemberDisabled = false; // Habilita os horários após as 20h
-        }
       }
 
       return {
@@ -244,8 +246,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
           filterDisabled || // Agendamento já feito
           isPast || // Horário no passado
           holidayDisabled || // Desabilitado por feriado
-          hour.disabled || // Padrão de desabilitação
-          isDecemberDisabled, // Regras específicas para dezembro
+          (isDecemberDisabled || hour.disabled), // Regras específicas para dezembro
         value: hour.value,
       };
     });
@@ -256,6 +257,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
     return res.status(500).send([]);
   }
 });
+
 
 
 
