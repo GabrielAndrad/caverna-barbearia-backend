@@ -166,137 +166,193 @@ const hours = [{
   value: '24:30:00'
 }]
 
-router.get('/schedule-hours/:date', async (req, res) => {
-  try {
-    const schedules = await schedule.find();
-    const holidays = await holiday.find();
+// router.get('/schedule-hours/:date', async (req, res) => {
+//   try {
+//     const schedules = await schedule.find();
+//     const holidays = await holiday.find();
 
-    const strData = moment(req.params.date).format('DD/MM/YYYY');
-    const partesData = strData.split('/');
-    const data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
+//     const strData = moment(req.params.date).format('DD/MM/YYYY');
+//     const partesData = strData.split('/');
+//     const data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
 
-    const isDecember = data.getMonth() === 11; // Dezembro
-    const dayOfMonth = data.getDate();
-    const dayOfWeek = data.getDay();
+//     const isDecember = data.getMonth() === 11; // Dezembro
+//     const dayOfMonth = data.getDate();
+//     const dayOfWeek = data.getDay();
 
-    const filterDate = schedules.filter(el =>
-      moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
-    );
+//     const filterDate = schedules.filter(el =>
+//       moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
+//     );
 
-    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 28 ? hourSabado : hours;
+//     const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 28 ? hourSabado : hours;
 
-    const setHours = hoursSelected.map((hour,index) => {
-      const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extrai hora e minuto
-      const hourFmt = hourPart + minutePart / 60; // Formato decimal
+//     const setHours = hoursSelected.map((hour,index) => {
+//       const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extrai hora e minuto
+//       const hourFmt = hourPart + minutePart / 60; // Formato decimal
 
-      const currentHour = new Date().getHours();
-      const currentMinute = new Date().getMinutes();
-      const currentDay = new Date().getDate();
-      // const isPast = dayOfMonth > &&currentHour > hourPart || (currentHour === hourPart && currentMinute >= minutePart);
+//       const currentHour = new Date().getHours();
+//       const currentMinute = new Date().getMinutes();
+//       const currentDay = new Date().getDate();
+//       // const isPast = dayOfMonth > &&currentHour > hourPart || (currentHour === hourPart && currentMinute >= minutePart);
 
-      const filterDisabled = filterDate.some(date => date.hour === hour.value);
+//       const filterDisabled = filterDate.some(date => date.hour === hour.value);
 
-      const holidayDisabled = holidays
-        .filter(holiday => moment(holiday.date).format('DD/MM/YYYY') === strData)
-        .some(holiday => {
-          const [startHour, startMinute] = holiday.inicio.split(':').map(Number);
-          const [endHour, endMinute] = holiday.fim.split(':').map(Number);
-          const start = startHour + startMinute / 60;
-          const end = endHour + endMinute / 60;
+//       const holidayDisabled = holidays
+//         .filter(holiday => moment(holiday.date).format('DD/MM/YYYY') === strData)
+//         .some(holiday => {
+//           const [startHour, startMinute] = holiday.inicio.split(':').map(Number);
+//           const [endHour, endMinute] = holiday.fim.split(':').map(Number);
+//           const start = startHour + startMinute / 60;
+//           const end = endHour + endMinute / 60;
 
-          return hourFmt > start && hourFmt < end;
-        });
+//           return hourFmt > start && hourFmt < end;
+//         });
 
-        const time = index !== 0 ? filterDate.filter(date => hoursSelected[index-1].value === date.hour):[]
-        const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
-        filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
+//         const time = index !== 0 ? filterDate.filter(date => hoursSelected[index-1].value === date.hour):[]
+//         const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
+        
+//         filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
   
 
       
-      if (isDecember) {
-        // Exceções para certos dias de dezembro
-        if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
-          // Habilita horários das 9:30 até as 23h nos dias de 17 a 21/12
-          if (hourFmt >= 9.5 && hourFmt <= 23) {
-            hour.text = hourFmt;
-            hour.disabled = false;
-          } else {
-            hour.text = hourFmt;
-            hour.disabled = true;
-          }
-        } else if (dayOfMonth === 22) {
-          // Habilita horários das 10h até as 18h no dia 22/12
-          if (hourFmt >= 10 && hourFmt <= 18) {
-            hour.text = hourFmt;
-            hour.disabled = false;
-          } else {
-            hour.text = hourFmt;
-            hour.disabled = true;
-          }
-        } else if (dayOfMonth === 23) {
-          // Habilita horários das 9:30 até as 23h no dia 23/12
-          if (hourFmt >= 9.5 && hourFmt <= 23) {
-            hour.text = hourFmt;
-            hour.disabled = false;
-          } else {
-            hour.text = hourFmt;
-            hour.disabled = true;
-          }
-        } else if (dayOfMonth === 24) {
-          // Habilita horários das 9:30 até as 12h no dia 24/12
-          if (hourFmt >= 9.5 && hourFmt <= 12) {
-            hour.text = hourFmt;
-            hour.disabled = false;
-          } else {
-            hour.text = hourFmt;
-            hour.disabled = true;
-          }
-        } else if ([26, 27, 28].includes(dayOfMonth)) {
-          // Habilita horários das 9:30 até as 23h de 26 a 28/12
-          if (hourFmt >= 9.5 && hourFmt <= 23) {
-            hour.text = hourFmt;
-            hour.disabled = false;
-          } else {
-            hour.text = hourFmt;
-            hour.disabled = true;
-          }
-        } else if (dayOfMonth === 29) {
-          // Habilita horários das 9:30 até as 18h no dia 29/12
-          if (hourFmt >= 9.5 && hourFmt <= 18) {
-            hour.text = hourFmt;
-            hour.disabled = false;
-          } else {
-            hour.text = hourFmt;
-            hour.disabled = true;
-          }
-        }
+//       if (isDecember) {
+//         // Exceções para certos dias de dezembro
+//         if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
+//           // Habilita horários das 9:30 até as 23h nos dias de 17 a 21/12
+//           if (hourFmt >= 9.5 && hourFmt <= 23) {
+//             hour.text = hourFmt;
+//             hour.disabled = false;
+//           } else {
+//             hour.text = hourFmt;
+//             hour.disabled = true;
+//           }
+//         } else if (dayOfMonth === 22) {
+//           // Habilita horários das 10h até as 18h no dia 22/12
+//           if (hourFmt >= 10 && hourFmt <= 18) {
+//             hour.text = hourFmt;
+//             hour.disabled = false;
+//           } else {
+//             hour.text = hourFmt;
+//             hour.disabled = true;
+//           }
+//         } else if (dayOfMonth === 23) {
+//           // Habilita horários das 9:30 até as 23h no dia 23/12
+//           if (hourFmt >= 9.5 && hourFmt <= 23) {
+//             hour.text = hourFmt;
+//             hour.disabled = false;
+//           } else {
+//             hour.text = hourFmt;
+//             hour.disabled = true;
+//           }
+//         } else if (dayOfMonth === 24) {
+//           // Habilita horários das 9:30 até as 12h no dia 24/12
+//           if (hourFmt >= 9.5 && hourFmt <= 12) {
+//             hour.text = hourFmt;
+//             hour.disabled = false;
+//           } else {
+//             hour.text = hourFmt;
+//             hour.disabled = true;
+//           }
+//         } else if ([26, 27, 28].includes(dayOfMonth)) {
+//           // Habilita horários das 9:30 até as 23h de 26 a 28/12
+//           if (hourFmt >= 9.5 && hourFmt <= 23) {
+//             hour.text = hourFmt;
+//             hour.disabled = false;
+//           } else {
+//             hour.text = hourFmt;
+//             hour.disabled = true;
+//           }
+//         } else if (dayOfMonth === 29) {
+//           // Habilita horários das 9:30 até as 18h no dia 29/12
+//           if (hourFmt >= 9.5 && hourFmt <= 18) {
+//             hour.text = hourFmt;
+//             hour.disabled = false;
+//           } else {
+//             hour.text = hourFmt;
+//             hour.disabled = true;
+//           }
+//         }
 
-        // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
-        if ([25, 30, 31, 1].includes(dayOfMonth)) {
-          hour.text = hourFmt;
-          hour.disabled = true; // Fechado nesses dias
-        }
+//         // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
+//         if ([25, 30, 31, 1].includes(dayOfMonth)) {
+//           hour.text = hourFmt;
+//           hour.disabled = true; // Fechado nesses dias
+//         }
+//       }
+
+//       return {
+//         disabled:
+//           filterDisabled || // Agendamento já feito
+//           holidayDisabled || // Desabilitado por feriado
+//           (date === 2 && time.length > 0 && hourFmt !== 14) 
+//           (hour.disabled),
+//            // Regras específicas para dezembro
+//         value: hour.value,
+//         text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart,date: (date === 2 && time.length > 0 && hourFmt !== 14)}
+//       };
+//     });
+
+//     return res.send(setHours);
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).send([]);
+//   }
+// });
+
+router.get('/schedule-hours/:date', async (req, res) => {
+  try {
+    const schedules = await schedule.find()
+    var strData = moment(req.params.date).format('DD/MM/YYYY')
+    var partesData = strData.split("/");
+    var data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
+
+    const filterDate = schedules.filter(el => {
+      return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
+    })
+    const holidays = await holiday.find()
+    const hoursSelected = data.getDay() === 6 && data.getDate() != 23?hourSabado:hours
+    const setHours = hoursSelected.map((hour,index) => {
+
+      const sum = new Date().getHours() >= +hour.value.split(':')[0]
+      const hourSum = new Date().getHours() === +hour.value.split(':')[0]? new Date().getMinutes() >= +hour.value.split(':')[1] : false
+      const filterDisabled = filterDate.filter(date => date.hour === hour.value)
+      const time = index !== 0 ? filterDate.filter(date => hoursSelected[index-1].value === date.hour):[]
+      const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
+      filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
+
+      let holidayDisabled = {inicio:0,fim:0}
+      if(holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)){
+        holidays.forEach((el) => {
+          let inicio = +(el.inicio.split(':')[0]+'.'+el.inicio.split(':')[1])
+          let fim = +(el.fim.split(':')[0]+'.'+el.fim.split(':')[1])
+          if(moment(el.date).format('DD/MM/YYYY') === strData){
+            holidayDisabled = {
+              inicio:
+              inicio > holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
+              fim:
+              fim > holidayDisabled.fim?fim:holidayDisabled.fim}
+          }
+        })
       }
 
+      const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
       return {
-        disabled:
-          filterDisabled || // Agendamento já feito
-          holidayDisabled || // Desabilitado por feriado
-          (date === 2 && time.length > 0 && hourFmt !== 14) 
-          (hour.disabled),
-           // Regras específicas para dezembro
-        value: hour.value,
-        text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart,date: (date === 2 && time.length > 0 && hourFmt !== 14)}
-      };
-    });
+        disabled: 
+        filterDisabled.length > 0 || 
+        (date === 2 && time.length > 0 && hourFmt !== 14) || 
+        (new Date() > data && sum && hourSum) ||
+         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
+        hourFmt > 20.3 ||
+        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 ),   
+        value: hour.value
+      }
 
-    return res.send(setHours);
+    })
+    return res.send(setHours)
   } catch (err) {
-    console.error(err);
-    return res.status(500).send([]);
+    console.log(err)
+    return res.send([])
   }
-});
-
+})
 
 
 
