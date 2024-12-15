@@ -183,7 +183,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     );
 
-    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 29 ? hourSabado : hours;
+    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 28 ? hourSabado : hours;
 
     const setHours = hoursSelected.map((hour) => {
       const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extrai hora e minuto
