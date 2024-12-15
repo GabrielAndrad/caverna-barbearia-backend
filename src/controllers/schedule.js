@@ -261,7 +261,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
           holidayDisabled || // Desabilitado por feriado
           (hour.disabled), // Regras específicas para dezembro
         value: hour.value,
-        text: { text: hour.text,filterDisabled,isPast,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart}
+        text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart}
       };
     });
 
