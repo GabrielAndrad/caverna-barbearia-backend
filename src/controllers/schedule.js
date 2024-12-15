@@ -168,93 +168,91 @@ const hours = [{
 
 
 
-
 router.get('/schedule-hours/:date', async (req, res) => {
   try {
     const schedules = await schedule.find();
     const holidays = await holiday.find();
 
-    var strData = moment(req.params.date).format('DD/MM/YYYY');
-    var partesData = strData.split("/");
-    var data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
+    const strData = moment(req.params.date).format('DD/MM/YYYY');
+    const partesData = strData.split('/');
+    const data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
 
-    const filterDate = schedules.filter(el => {
-      return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY');
-    });
+    const isDecember = data.getMonth() === 11; // Dezembro
+    const dayOfMonth = data.getDate();
+    const dayOfWeek = data.getDay();
 
-    const hoursSelected = data.getDay() === 6 && data.getDate() !== 23 ? hourSabado : hours;
+    const filterDate = schedules.filter(el =>
+      moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
+    );
+
+    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 23 ? hourSabado : hours;
 
     const setHours = hoursSelected.map((hour, index) => {
-      const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extraindo hora e minuto do formato "HH:mm:ss"
-      const hourFmt = hourPart + minutePart / 60; // Convertendo para formato decimal (ex.: 12:30 -> 12.5)
+      const [hourPart, minutePart] = hour.value.split(':').map(Number); // Extrai hora e minuto
+      const hourFmt = hourPart + minutePart / 60; // Formato decimal
 
       const currentHour = new Date().getHours();
       const currentMinute = new Date().getMinutes();
-      const sum = currentHour > hourPart || (currentHour === hourPart && currentMinute >= minutePart);
+      const isPast = currentHour > hourPart || (currentHour === hourPart && currentMinute >= minutePart);
 
-      const filterDisabled = filterDate.filter(date => date.hour === hour.value);
-      const time = index !== 0 ? filterDate.filter(date => hoursSelected[index - 1].value === date.hour) : [];
-      const date = index !== 0
-        ? filterDate.filter(date => hoursSelected[index - 1].value === date.hour).length > 0
-          ? filterDate.filter(date => hoursSelected[index - 1].value === date.hour)[0].typeCut.time
-          : 0
-        : 0;
+      const filterDisabled = filterDate.some(date => date.hour === hour.value);
 
-      let holidayDisabled = { inicio: 0, fim: 0 };
-      if (holidays.map(res => moment(res.date).format('DD/MM/YYYY')).includes(strData)) {
-        holidays.forEach((el) => {
-          let [inicioHour, inicioMinute] = el.inicio.split(':').map(Number);
-          let [fimHour, fimMinute] = el.fim.split(':').map(Number);
+      const holidayDisabled = holidays
+        .filter(holiday => moment(holiday.date).format('DD/MM/YYYY') === strData)
+        .some(holiday => {
+          const [startHour, startMinute] = holiday.inicio.split(':').map(Number);
+          const [endHour, endMinute] = holiday.fim.split(':').map(Number);
+          const start = startHour + startMinute / 60;
+          const end = endHour + endMinute / 60;
 
-          let inicio = inicioHour + inicioMinute / 60;
-          let fim = fimHour + fimMinute / 60;
-
-          if (moment(el.date).format('DD/MM/YYYY') === strData) {
-            holidayDisabled = {
-              inicio: Math.max(inicio, holidayDisabled.inicio),
-              fim: Math.max(fim, holidayDisabled.fim)
-            };
-          }
+          return hourFmt > start && hourFmt < end;
         });
-      }
 
-      // Regras específicas para o período de dezembro
-      if (data.getMonth() === 11) { // Dezembro
-        if (data.getDate() >= 17 && data.getDate() <= 21) {
-          if (hourFmt < 9.5 || hourFmt > 23) return { disabled: true, value: hour.value };
-        } else if (data.getDate() === 22) {
-          if (hourFmt < 10 || hourFmt > 18) return { disabled: true, value: hour.value };
-        } else if (data.getDate() === 23) {
-          if (hourFmt < 9.5 || hourFmt > 23) return { disabled: true, value: hour.value };
-        } else if (data.getDate() === 24) {
-          if (hourFmt < 9.5 || hourFmt > 12) return { disabled: true, value: hour.value };
-        } else if ([25, 30, 31].includes(data.getDate())) {
+      // Regras específicas para dezembro
+      if (isDecember) {
+        if ([25, 30, 31].includes(dayOfMonth) || (dayOfMonth === 1 && data.getMonth() === 0)) {
           return { disabled: true, value: hour.value }; // Fechado
-        } else if (data.getDate() >= 26 && data.getDate() <= 28) {
-          if (hourFmt < 9.5 || hourFmt > 23) return { disabled: true, value: hour.value };
-        } else if (data.getDate() === 29) {
-          if (hourFmt < 9.5 || hourFmt > 18) return { disabled: true, value: hour.value };
-        } else if (data.getDate() === 1 && data.getMonth() === 0) { // 1º de janeiro
-          return { disabled: true, value: hour.value }; // Fechado
+        }
+
+        if (dayOfMonth >= 17 && dayOfMonth <= 21 && (hourFmt < 9.5 || hourFmt > 23)) {
+          return { disabled: true, value: hour.value };
+        }
+
+        if (dayOfMonth === 22 && (hourFmt < 10 || hourFmt > 18)) {
+          return { disabled: true, value: hour.value };
+        }
+
+        if (dayOfMonth === 23 && (hourFmt < 9.5 || hourFmt > 23)) {
+          return { disabled: true, value: hour.value };
+        }
+
+        if (dayOfMonth === 24 && (hourFmt < 9.5 || hourFmt > 12)) {
+          return { disabled: true, value: hour.value };
+        }
+
+        if (dayOfMonth >= 26 && dayOfMonth <= 28 && (hourFmt < 9.5 || hourFmt > 23)) {
+          return { disabled: true, value: hour.value };
+        }
+
+        if (dayOfMonth === 29 && (hourFmt < 9.5 || hourFmt > 18)) {
+          return { disabled: true, value: hour.value };
         }
       }
 
       return {
         disabled:
-          filterDisabled.length > 0 ||
-          (date === 2 && time.length > 0 && hourFmt !== 14) ||
-          (new Date() > data && sum) ||
-          ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
-          hourFmt > 20.3 ||
-          (data.getDay() === 6 ? hourFmt === 8 : hourFmt === 9),
-        value: hour.value
+          filterDisabled || // Agendamento já feito
+          isPast || // Horário no passado
+          holidayDisabled || // Desabilitado por feriado
+          hour.disabled, // Padrão de desabilitação
+        value: hour.value,
       };
     });
 
     return res.send(setHours);
   } catch (err) {
-    console.log(err);
-    return res.send([]);
+    console.error(err);
+    return res.status(500).send([]);
   }
 });
 
