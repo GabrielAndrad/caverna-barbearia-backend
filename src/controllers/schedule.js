@@ -207,6 +207,11 @@ router.get('/schedule-hours/:date', async (req, res) => {
           return hourFmt > start && hourFmt < end;
         });
 
+        const time = index !== 0 ? filterDate.filter(date => hoursSelected[index-1].value === date.hour):[]
+        const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
+        filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
+  
+
       
       if (isDecember) {
         // Exceções para certos dias de dezembro
@@ -277,9 +282,13 @@ router.get('/schedule-hours/:date', async (req, res) => {
         disabled:
           filterDisabled || // Agendamento já feito
           holidayDisabled || // Desabilitado por feriado
-          (hour.disabled), // Regras específicas para dezembro
+          (date === 2 && time.length > 0 && hourFmt !== 14) || 
+          (new Date() > data && sum && hourSum) ||
+          (hour.disabled),
+           // Regras específicas para dezembro
         value: hour.value,
-        text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart}
+        text: { text: hour.text,filterDisabled,holidayDisabled,disabled: hour.disabled,value:hour.value,hourPart,minutePart,date: (date === 2 && time.length > 0 && hourFmt !== 14) || 
+          (new Date() > data && sum && hourSum) ||}
       };
     });
 
