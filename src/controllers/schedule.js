@@ -167,7 +167,6 @@ const hours = [{
 }]
 
 
-
 router.get('/schedule-hours/:date', async (req, res) => {
   try {
     const schedules = await schedule.find();
@@ -212,20 +211,31 @@ router.get('/schedule-hours/:date', async (req, res) => {
       let isDecemberDisabled = hourFmt >= 20; // Por padrão, horários após as 20h são desabilitados
 
       if (isDecember) {
+        // Exceções para certos dias de dezembro
         if ([17, 18, 19, 20, 21, 23, 26, 27, 28].includes(dayOfMonth) && hourFmt <= 23) {
-          isDecemberDisabled = false; // Exceções: Horários até as 23h
+          isDecemberDisabled = false; // Horários até as 23h
         }
 
         if (dayOfMonth === 22 && hourFmt <= 18) {
-          isDecemberDisabled = false; // Exceção: Horários até as 18h
+          isDecemberDisabled = false; // Horários até as 18h no dia 22/12
         }
 
         if (dayOfMonth === 24 && hourFmt <= 12) {
-          isDecemberDisabled = false; // Exceção: Horários até as 12h
+          isDecemberDisabled = false; // Horários até as 12h no dia 24/12
         }
 
         if (dayOfMonth === 29 && hourFmt <= 18) {
-          isDecemberDisabled = false; // Exceção: Horários até as 18h
+          isDecemberDisabled = false; // Horários até as 18h no dia 29/12
+        }
+
+        // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
+        if (dayOfMonth === 25 || dayOfMonth === 30 || dayOfMonth === 31 || dayOfMonth === 1) {
+          isDecemberDisabled = true; // Fechado nesses dias
+        }
+
+        // Habilitar horários acima de 20h
+        if (hourFmt > 20) {
+          isDecemberDisabled = false; // Habilita os horários após as 20h
         }
       }
 
@@ -246,6 +256,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
     return res.status(500).send([]);
   }
 });
+
 
 
 //return all schedules
