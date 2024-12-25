@@ -342,7 +342,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
 
       hour.isDecember = isDecember;
-      
+
       if (isDecember) {
                 // Exceções para certos dias de dezembro
                 if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
@@ -423,7 +423,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
         value: hour.value,
         text: hour.text,
         date:date,
-        time:time
+        time:time,
+        isDecember: isDecember
       }
 
     })
