@@ -341,7 +341,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
       }
       const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
 
-    
+      hour.isDecember = isDecember;
+      
       if (isDecember) {
                 // Exceções para certos dias de dezembro
                 if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
@@ -405,7 +406,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
                   hour.text = hourFmt;
                   hour.disabled = true; // Fechado nesses dias
                 }
-              }
+      }
         
 
       
