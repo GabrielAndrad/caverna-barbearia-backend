@@ -431,7 +431,8 @@ router.get('/schedule-hours/:date', async (req, res) => {
         data: data,
         sum:sum,
         hourSum,
-        hourFmt
+        hourFmt,
+        hoursSelected
       }
 
     })
