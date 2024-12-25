@@ -424,7 +424,14 @@ router.get('/schedule-hours/:date', async (req, res) => {
         text: hour.text,
         date:date,
         time:time,
-        isDecember: isDecember
+        isDecember: isDecember,
+        holidayDisabled: holidayDisabled,
+        filterDisabled: filterDisabled,
+        hourDisabled: hour.disabled,
+        data: data,
+        sum:sum,
+        hourSum,
+        hourFmt
       }
 
     })
