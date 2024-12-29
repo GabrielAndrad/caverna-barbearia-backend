@@ -343,70 +343,70 @@ router.get('/schedule-hours/:date', async (req, res) => {
 
       hour.isDecember = isDecember;
 
-      if (isDecember) {
-                // Exceções para certos dias de dezembro
-                if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
-                  // Habilita horários das 9:30 até as 23h nos dias de 17 a 21/12
-                  if (hourFmt >= 9.3 && hourFmt <= 23) {
-                    hour.text = hourFmt;
-                    hour.disabled = false;
-                  } else {
-                    hour.text = hourFmt;
-                    hour.disabled = true;
-                  }
-                } else if (dayOfMonth === 22) {
-                  // Habilita horários das 10h até as 18h no dia 22/12
-                  if (hourFmt >= 10 && hourFmt <= 18) {
-                    hour.text = hourFmt;
-                    hour.disabled = false;
-                  } else {
-                    hour.text = hourFmt;
-                    hour.disabled = true;
-                  }
-                } else if (dayOfMonth === 23) {
-                  // Habilita horários das 9:30 até as 23h no dia 23/12
-                  if (hourFmt >= 9.3 && hourFmt <= 23) {
-                    hour.text = hourFmt;
-                    hour.disabled = false;
-                  } else {
-                    hour.text = hourFmt;
-                    hour.disabled = true;
-                  }
-                } else if (dayOfMonth === 24) {
-                  // Habilita horários das 9:30 até as 12h no dia 24/12
-                  if (hourFmt >= 9.3 && hourFmt <= 12) {
-                    hour.text = hourFmt;
-                    hour.disabled = false;
-                  } else {
-                    hour.text = hourFmt;
-                    hour.disabled = true;
-                  }
-                } else if ([26, 27, 28].includes(dayOfMonth)) {
-                  // Habilita horários das 9:30 até as 23h de 26 a 28/12
-                  if (hourFmt >= 9.3 && hourFmt <= 23) {
-                    hour.text = hourFmt;
-                    hour.disabled = false;
-                  } else {
-                    hour.text = hourFmt;
-                    hour.disabled = true;
-                  }
-                } else if (dayOfMonth === 29) {
-                  // Habilita horários das 9:30 até as 18h no dia 29/12
-                  if (hourFmt >= 9.3 && hourFmt <= 18) {
-                    hour.text = hourFmt;
-                    hour.disabled = false;
-                  } else {
-                    hour.text = hourFmt;
-                    hour.disabled = true;
-                  }
-                }
+      // if (isDecember) {
+      //           // Exceções para certos dias de dezembro
+      //           if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
+      //             // Habilita horários das 9:30 até as 23h nos dias de 17 a 21/12
+      //             if (hourFmt >= 9.3 && hourFmt <= 23) {
+      //               hour.text = hourFmt;
+      //               hour.disabled = false;
+      //             } else {
+      //               hour.text = hourFmt;
+      //               hour.disabled = true;
+      //             }
+      //           } else if (dayOfMonth === 22) {
+      //             // Habilita horários das 10h até as 18h no dia 22/12
+      //             if (hourFmt >= 10 && hourFmt <= 18) {
+      //               hour.text = hourFmt;
+      //               hour.disabled = false;
+      //             } else {
+      //               hour.text = hourFmt;
+      //               hour.disabled = true;
+      //             }
+      //           } else if (dayOfMonth === 23) {
+      //             // Habilita horários das 9:30 até as 23h no dia 23/12
+      //             if (hourFmt >= 9.3 && hourFmt <= 23) {
+      //               hour.text = hourFmt;
+      //               hour.disabled = false;
+      //             } else {
+      //               hour.text = hourFmt;
+      //               hour.disabled = true;
+      //             }
+      //           } else if (dayOfMonth === 24) {
+      //             // Habilita horários das 9:30 até as 12h no dia 24/12
+      //             if (hourFmt >= 9.3 && hourFmt <= 12) {
+      //               hour.text = hourFmt;
+      //               hour.disabled = false;
+      //             } else {
+      //               hour.text = hourFmt;
+      //               hour.disabled = true;
+      //             }
+      //           } else if ([26, 27, 28].includes(dayOfMonth)) {
+      //             // Habilita horários das 9:30 até as 23h de 26 a 28/12
+      //             if (hourFmt >= 9.3 && hourFmt <= 23) {
+      //               hour.text = hourFmt;
+      //               hour.disabled = false;
+      //             } else {
+      //               hour.text = hourFmt;
+      //               hour.disabled = true;
+      //             }
+      //           } else if (dayOfMonth === 29) {
+      //             // Habilita horários das 9:30 até as 18h no dia 29/12
+      //             if (hourFmt >= 9.3 && hourFmt <= 18) {
+      //               hour.text = hourFmt;
+      //               hour.disabled = false;
+      //             } else {
+      //               hour.text = hourFmt;
+      //               hour.disabled = true;
+      //             }
+      //           }
         
-                // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
-                if ([25, 30, 31, 1].includes(dayOfMonth)) {
-                  hour.text = hourFmt;
-                  hour.disabled = true; // Fechado nesses dias
-                }
-      }
+      //           // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
+      //           if ([25, 30, 31, 1].includes(dayOfMonth)) {
+      //             hour.text = hourFmt;
+      //             hour.disabled = true; // Fechado nesses dias
+      //           }
+      // }
         
 
       
