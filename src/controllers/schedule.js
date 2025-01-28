@@ -416,9 +416,9 @@ router.get('/schedule-hours/:date', async (req, res) => {
         (date === 2 && time.length > 0 && hourFmt !== 14) || 
         hour.disabled || 
         (new Date() > data && sum && hourSum) ||
-         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim)
-        // hourFmt > 20.3 ||
-        // (data.getDay() === 6?hourFmt === 8:hourFmt === 9 )
+         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
+        hourFmt > 20.3 ||
+        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 )
         ,   
         value: hour.value,
         text: hour.text,
