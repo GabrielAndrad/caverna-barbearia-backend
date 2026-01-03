@@ -301,141 +301,98 @@ const hours = [{
 router.get('/schedule-hours/:date', async (req, res) => {
   try {
     const schedules = await schedule.find()
-    var strData = moment(req.params.date).format('DD/MM/YYYY')
-    var partesData = strData.split("/");
-    var data = new Date(partesData[2], partesData[1] - 1, partesData[0]);
+    const strData = moment(req.params.date).format('DD/MM/YYYY')
+    const partesData = strData.split("/")
+    const data = new Date(partesData[2], partesData[1] - 1, partesData[0])
+    const dayOfWeek = data.getDay()
+
+    // Bloqueio até 06/01/2025 (inclusive)
+    const blockDate = new Date('2025-01-06')
+    blockDate.setHours(23, 59, 59, 999) // Final do dia 06/01/2025
+    const isBlocked = data <= blockDate
 
     const filterDate = schedules.filter(el => {
       return moment(el.date).format('DD/MM/YYYY') === moment(req.params.date).format('DD/MM/YYYY')
     })
-    const isDecember = data.getMonth() === 11; // Dezembro
-    const dayOfMonth = data.getDate();
-    const dayOfWeek = data.getDay();
 
     const holidays = await holiday.find()
-    // const hoursSelected = data.getDay() === 6 && data.getDate() != 21 && data.getDate() != 28?hourSabado:hours
-    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 28 ? hourSabado : hours;
+    const hoursSelected = dayOfWeek === 6 ? hourSabado : hours
 
-    const setHours = hoursSelected.map((hour,index) => {
-
+    const setHours = hoursSelected.map((hour, index) => {
       const sum = new Date().getHours() >= +hour.value.split(':')[0]
-      const hourSum = new Date().getHours() === +hour.value.split(':')[0]? new Date().getMinutes() >= +hour.value.split(':')[1] : false
+      const hourSum = new Date().getHours() === +hour.value.split(':')[0] ? new Date().getMinutes() >= +hour.value.split(':')[1] : false
       const filterDisabled = filterDate.filter(date => date.hour === hour.value)
-      const time = index !== 0 ? filterDate.filter(date => hoursSelected[index-1].value === date.hour):[]
-      const date = index !== 0? filterDate.filter(date => hoursSelected[index-1].value === date.hour).length > 0?
-      filterDate.filter(date => hoursSelected[index-1].value === date.hour)[0].typeCut.time:0:0
+      const time = index !== 0 ? filterDate.filter(date => hoursSelected[index - 1].value === date.hour) : []
+      const date = index !== 0 ? filterDate.filter(date => hoursSelected[index - 1].value === date.hour).length > 0 ?
+        filterDate.filter(date => hoursSelected[index - 1].value === date.hour)[0].typeCut.time : 0 : 0
 
-      let holidayDisabled = {inicio:0,fim:0}
-      if(holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)){
+      let holidayDisabled = { inicio: 0, fim: 0 }
+      if (holidays.map((res) => moment(res.date).format('DD/MM/YYYY')).includes(strData)) {
         holidays.forEach((el) => {
-          let inicio = +(el.inicio.split(':')[0]+'.'+el.inicio.split(':')[1])
-          let fim = +(el.fim.split(':')[0]+'.'+el.fim.split(':')[1])
-          if(moment(el.date).format('DD/MM/YYYY') === strData){
+          let inicio = +(el.inicio.split(':')[0] + '.' + el.inicio.split(':')[1])
+          let fim = +(el.fim.split(':')[0] + '.' + el.fim.split(':')[1])
+          if (moment(el.date).format('DD/MM/YYYY') === strData) {
             holidayDisabled = {
-              inicio:
-              inicio > holidayDisabled.inicio || inicio === 0?inicio:holidayDisabled.inicio,
-              fim:
-              fim > holidayDisabled.fim?fim:holidayDisabled.fim}
+              inicio: inicio > holidayDisabled.inicio || inicio === 0 ? inicio : holidayDisabled.inicio,
+              fim: fim > holidayDisabled.fim ? fim : holidayDisabled.fim
+            }
           }
         })
       }
-      const hourFmt = +(hour.value.split(':')[0]+'.'+hour.value.split(':')[1])
 
-      hour.isDecember = isDecember;
+      const hourFmt = +(hour.value.split(':')[0] + '.' + hour.value.split(':')[1])
 
-      // if (isDecember) {
-      //           // Exceções para certos dias de dezembro
-      //           if ([17, 18, 19, 20, 21].includes(dayOfMonth)) {
-      //             // Habilita horários das 9:30 até as 23h nos dias de 17 a 21/12
-      //             if (hourFmt >= 9.3 && hourFmt <= 23) {
-      //               hour.text = hourFmt;
-      //               hour.disabled = false;
-      //             } else {
-      //               hour.text = hourFmt;
-      //               hour.disabled = true;
-      //             }
-      //           } else if (dayOfMonth === 22) {
-      //             // Habilita horários das 10h até as 18h no dia 22/12
-      //             if (hourFmt >= 10 && hourFmt <= 18) {
-      //               hour.text = hourFmt;
-      //               hour.disabled = false;
-      //             } else {
-      //               hour.text = hourFmt;
-      //               hour.disabled = true;
-      //             }
-      //           } else if (dayOfMonth === 23) {
-      //             // Habilita horários das 9:30 até as 23h no dia 23/12
-      //             if (hourFmt >= 9.3 && hourFmt <= 23) {
-      //               hour.text = hourFmt;
-      //               hour.disabled = false;
-      //             } else {
-      //               hour.text = hourFmt;
-      //               hour.disabled = true;
-      //             }
-      //           } else if (dayOfMonth === 24) {
-      //             // Habilita horários das 9:30 até as 12h no dia 24/12
-      //             if (hourFmt >= 9.3 && hourFmt <= 12) {
-      //               hour.text = hourFmt;
-      //               hour.disabled = false;
-      //             } else {
-      //               hour.text = hourFmt;
-      //               hour.disabled = true;
-      //             }
-      //           } else if ([26, 27, 28].includes(dayOfMonth)) {
-      //             // Habilita horários das 9:30 até as 23h de 26 a 28/12
-      //             if (hourFmt >= 9.3 && hourFmt <= 23) {
-      //               hour.text = hourFmt;
-      //               hour.disabled = false;
-      //             } else {
-      //               hour.text = hourFmt;
-      //               hour.disabled = true;
-      //             }
-      //           } else if (dayOfMonth === 29) {
-      //             // Habilita horários das 9:30 até as 18h no dia 29/12
-      //             if (hourFmt >= 9.3 && hourFmt <= 18) {
-      //               hour.text = hourFmt;
-      //               hour.disabled = false;
-      //             } else {
-      //               hour.text = hourFmt;
-      //               hour.disabled = true;
-      //             }
-      //           }
-        
-      //           // Fechamento nos dias 25/12, 30/12, 31/12 e 01/01
-      //           if ([25, 30, 31, 1].includes(dayOfMonth)) {
-      //             hour.text = hourFmt;
-      //             hour.disabled = true; // Fechado nesses dias
-      //           }
-      // }
-        
+      // Verifica se é horário de almoço (12:30 às 14:00) - exceto sábado
+      const isLunchTime = dayOfWeek !== 6 && hourFmt >= 12.3 && hourFmt < 14
 
+      // Define horários por dia da semana
+      let isDayTimeClosed = false
       
+      if (dayOfWeek === 0 || dayOfWeek === 1) {
+        // Domingo (0) e Segunda (1): Fechado
+        isDayTimeClosed = true
+      } else if (dayOfWeek === 2) {
+        // Terça: 9:30 às 19:30 (fecha às 20h)
+        isDayTimeClosed = hourFmt < 9.3 || hourFmt > 19.3
+      } else if (dayOfWeek === 3) {
+        // Quarta: 9:30 às 17:30 (fecha às 18h)
+        isDayTimeClosed = hourFmt < 9.3 || hourFmt > 17.3
+      } else if (dayOfWeek === 4) {
+        // Quinta: 9:30 às 18:30 (fecha às 19h)
+        isDayTimeClosed = hourFmt < 9.3 || hourFmt > 18.3
+      } else if (dayOfWeek === 5) {
+        // Sexta: 9:30 às 20:30 (fecha às 21h)
+        isDayTimeClosed = hourFmt < 9.3 || hourFmt > 20.3
+      } else if (dayOfWeek === 6) {
+        // Sábado: 8:00 às 15:30 (fecha às 16h) - SEM horário de almoço
+        isDayTimeClosed = hourFmt < 8 || hourFmt > 15.3
+      }
+
       return {
-        disabled: 
-        filterDisabled.length > 0 || 
-        (date === 2 && time.length > 0 && hourFmt !== 14) || 
-        hour.disabled || 
-        (new Date() > data && sum && hourSum) ||
-         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
-        hourFmt > 20.3 ||
-        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 )
-        ,   
+        disabled:
+          isBlocked || // Bloqueado até 06/01/2025
+          filterDisabled.length > 0 || // Já agendado
+          (date === 2 && time.length > 0 && hourFmt !== 14) || // Lógica de duração do corte
+          hour.disabled || // Desabilitado na estrutura base
+          (new Date() > data && sum && hourSum) || // Horário já passou
+          (holidayDisabled && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) || // Feriado
+          isDayTimeClosed || // Fora do horário de funcionamento do dia
+          isLunchTime, // Horário de almoço (exceto sábado)
         value: hour.value,
         text: hour.text,
-        date:date,
-        time:time,
-        isDecember: isDecember,
+        date: date,
+        time: time,
         holidayDisabled: holidayDisabled,
         filterDisabled: filterDisabled,
         hourDisabled: hour,
         data: data,
-        sum:sum,
+        sum: sum,
         hourSum,
         hourFmt,
         hoursSelected
       }
-
     })
+
     return res.send(setHours)
   } catch (err) {
     console.log(err)
