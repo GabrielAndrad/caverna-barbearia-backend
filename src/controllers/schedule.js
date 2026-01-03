@@ -306,9 +306,9 @@ router.get('/schedule-hours/:date', async (req, res) => {
     const data = new Date(partesData[2], partesData[1] - 1, partesData[0])
     const dayOfWeek = data.getDay()
 
-    // Bloqueio até 06/01/2025 (inclusive)
-    const blockDate = new Date('2025-01-06')
-    blockDate.setHours(23, 59, 59, 999) // Final do dia 06/01/2025
+    // Bloqueio até 12/01/2025 (inclusive)
+    const blockDate = new Date('2025-01-12')
+    blockDate.setHours(23, 59, 59, 999) // Final do dia 12/01/2025
     const isBlocked = data <= blockDate
 
     const filterDate = schedules.filter(el => {
@@ -370,7 +370,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
 
       return {
         disabled:
-          isBlocked || // Bloqueado até 06/01/2025
+          isBlocked || // Bloqueado até 12/01/2025
           filterDisabled.length > 0 || // Já agendado
           (date === 2 && time.length > 0 && hourFmt !== 14) || // Lógica de duração do corte
           hour.disabled || // Desabilitado na estrutura base
