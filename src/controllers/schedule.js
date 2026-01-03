@@ -7,6 +7,7 @@ const user = require('../models/user')
 const holiday = require('../models/holiday')
 const axios = require('axios')
 const router = express.Router()
+const { getHoursSelectedForDate } = require('../utils/scheduleHours')
 
 const hourSabado = [{
   disabled: false,
@@ -313,8 +314,9 @@ router.get('/schedule-hours/:date', async (req, res) => {
     const dayOfWeek = data.getDay();
 
     const holidays = await holiday.find()
-    // const hoursSelected = data.getDay() === 6 && data.getDate() != 21 && data.getDate() != 28?hourSabado:hours
-    const hoursSelected = dayOfWeek === 6 && dayOfMonth !== 21 && dayOfMonth !== 28 ? hourSabado : hours;
+
+    // NOVA GRADE (hardcode) + bloqueio total até 06/01/2025 (inclusive)
+    const hoursSelected = getHoursSelectedForDate(data)
 
     const setHours = hoursSelected.map((hour,index) => {
 
@@ -416,9 +418,7 @@ router.get('/schedule-hours/:date', async (req, res) => {
         (date === 2 && time.length > 0 && hourFmt !== 14) || 
         hour.disabled || 
         (new Date() > data && sum && hourSum) ||
-         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim) ||
-        hourFmt > 20.3 ||
-        (data.getDay() === 6?hourFmt === 8:hourFmt === 9 )
+         ((holidayDisabled) && hourFmt > holidayDisabled.inicio && hourFmt < holidayDisabled.fim)
         ,   
         value: hour.value,
         text: hour.text,
