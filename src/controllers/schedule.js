@@ -677,11 +677,13 @@ const sendMessage = (data,id) => {
 {
   phone:data.user.phone,
   message:`Olá, ${data.user.name} seu agendamento foi concluído com sucesso!
-
+  
 Serviço: ${data.typeCut && data.typeCut.title ? data.typeCut.title : '-'}
+  
 Preço: ${data.typeCut && data.typeCut.price ? data.typeCut.price : '-'}
+  
 Compareça ao local da barbearia às ${data.hour} da data ${moment(data.date).format('DD/MM/YYYY')}
-
+  
 Segue id do agendamento abaixo
 
 Qualquer dúvida estou a disposição!`
