@@ -560,6 +560,37 @@ router.get('/schedules-by-id/:id', async (req, res) => {
   }
 })
 
+const phoneHook = 'https://hook.us1.make.com/wkwqejgw51h3j4u3d3ec8cm7yrybbacs'
+
+router.post('/check-phone', async (req, res) => {
+  try {
+    const phone = req.body && req.body.phone
+    if (!phone) return res.json(false)
+
+    const response = await axios.post(phoneHook, { phone }, {
+      timeout: 20000,
+      responseType: 'text',
+      validateStatus: () => true,
+      headers: { 'Content-Type': 'application/json' },
+    })
+
+    if (response.status >= 400) return res.status(response.status).json(false)
+
+    let body = response.data
+    try {
+      body = JSON.parse(body)
+    } catch (err) {
+      body = response.data
+    }
+
+    const valid = body !== false && body !== 'false' && body !== '' && body != null
+    return res.json(valid ? body : false)
+  } catch (err) {
+    console.log(err)
+    return res.status(502).json(false)
+  }
+})
+
 router.post('/schedule', async (req, res) => {
   try {
     const scheduleList = await schedule.find()
@@ -646,9 +677,11 @@ const sendMessage = (data,id) => {
 {
   phone:data.user.phone,
   message:`Olá, ${data.user.name} seu agendamento foi concluído com sucesso!
-  
-Compareça ao local da barbearia as ${data.hour} da data ${moment(data.date).format('DD/MM/YYYY')}
-  
+
+Serviço: ${data.typeCut && data.typeCut.title ? data.typeCut.title : '-'}
+Preço: ${data.typeCut && data.typeCut.price ? data.typeCut.price : '-'}
+Compareça ao local da barbearia às ${data.hour} da data ${moment(data.date).format('DD/MM/YYYY')}
+
 Segue id do agendamento abaixo
 
 Qualquer dúvida estou a disposição!`
